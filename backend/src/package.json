@@ -1,16 +1,45 @@
 {
-  "name": "backend_src",
+  "name": "socketio-chat-server",
   "version": "1.0.0",
-  "description": "backend source packages",
+  "description": "Real-time chat server using Express and Socket.IO",
   "main": "index.js",
   "scripts": {
-    "test": "node index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "build": "npm run clean && npm run copy-files",
+    "build:bundle": "npm run clean && webpack --mode production",
+    "build:docker": "docker build -t socketio-chat .",
+    "clean": "rimraf dist",
+    "copy-files": "mkdir -p dist && cp index.js dist/ && cp package.json dist/",
+    "prebuild": "npm install",
+    "postbuild": "cd dist && npm install --production",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^5.1.0",
-    "socketio": "^1.0.0"
-  }
+    "express": "^4.18.2",
+    "socket.io": "^4.7.5"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.28.4",
+    "@babel/preset-env": "^7.28.3",
+    "babel-loader": "^10.0.0",
+    "nodemon": "^3.0.2",
+    "rimraf": "^5.0.10",
+    "webpack": "^5.101.3",
+    "webpack-cli": "^5.1.4",
+    "webpack-node-externals": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "keywords": [
+    "socket.io",
+    "express",
+    "chat",
+    "real-time",
+    "websocket"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
 }
