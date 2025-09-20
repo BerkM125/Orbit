@@ -1,4 +1,3 @@
-const functions = require('@google-cloud/functions-framework');
 const express = require('express');
 const cors = require('cors');
 const { createServer } = require('http');
@@ -80,5 +79,8 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Register the HTTP function with the Express app (not the HTTP server)
-functions.http('chatServer', app);
+// CRITICAL: Listen on the PORT environment variable for Cloud Run
+const port = process.env.PORT || 8080;
+httpServer.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
