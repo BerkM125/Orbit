@@ -1,0 +1,16 @@
+{
+  "name": "backend_src",
+  "version": "1.0.0",
+  "description": "backend source packages",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "socketio": "^1.0.0"
+  }
+}
