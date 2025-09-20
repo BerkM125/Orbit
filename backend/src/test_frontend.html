@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Test Join Room</title>
+	<style>
+		body { font-family: Arial, Helvetica, sans-serif; padding: 2rem; }
+		button { font-size: 1rem; padding: 0.5rem 1rem; }
+	</style>
+</head>
+<body>
+	<h1>Socket.IO — Join Room Tester</h1>
+	<p>Click the button below to connect to the Socket.IO server and request to join the <strong>cascadia</strong> room.</p>
+	<button id="joinBtn">Join "cascadia" Room</button>
+
+	<!-- Socket.IO client from CDN -->
+	<script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+	<script>
+		// Connect to the Socket.IO server running on port 3000
+		const socket = io('https://6f3ad484c5c1.ngrok-free.app');
+
+        socket.emit("join", {"roomID" : "cascadia"});
+
+        socket.on('updateLocation', (data) => {
+            console.log('Location update received:', data);
+        }); 
+	</script>
+</body>
+</html>

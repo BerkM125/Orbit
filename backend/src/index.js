@@ -1,33 +1,40 @@
 const express = require('express');
 const cors = require('cors');
+const http = require('http'); // Import the http module
+const { Server } = require('socket.io'); // Import the Server class
+
 const app = express();
-const socketIO = require('socket.io')(3000); 
+const server = http.createServer(app); // Create an HTTP server from the Express app
+const io = new Server(server, {
+    cors: {
+        origin: '*', // Allow all origins for simplicity in this example
+    },
+});
 
 // Just a demo room for now
 const demoRoom = {
-    id: 'cascadia', // Used to access room info
-    name: 'Cascadia Hackathon', // Used to display your current event
+    id: 'cascadia',
+    name: 'Cascadia Hackathon',
     users: []
 };
 
-// Someone has connected to the server
-socketIO.on("connection", (socket) => {
-    console.log("New user connected");
+// All socket connection logic inside here
+io.on("connection", (socket) => {
+    console.log("New client connected", socket.id);
 
-    socketIO.join(demoRoom.id);
-
-    socket.on("disconnect", () => {
-        console.log("Client disconnected");
+    socket.on("join", (data) => {
+        const roomID = data.roomID;
+        console.log(`Socket ${socket.id} requested to join room: ${roomID}`);
     });
 });
 
 app.use(cors());
 
 app.get('/', (req, res) => {
-    res.send('Hello World!');
+    res.send('Established connection to server home.');
 });
 
-app.listen(3000, () => {   
+// Listen on the shared server instance, not the Express app
+server.listen(3000, () => { 
     console.log('Server is running on http://localhost:3000');
-    console.log('Press CTRL+C to stop the server');
 });
