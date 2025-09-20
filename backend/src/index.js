@@ -1,20 +1,35 @@
 const express = require('express');
 const cors = require('cors');
-const app = express();
-const socketIO = require('socket.io')(3000); 
+const { createServer } = require('http');
+const { Server } = require('socket.io');
 
-// Just a demo room for now
+const app = express();
+const server = createServer(app);
+
+// Use dynamic port from environment
+const PORT = process.env.PORT || 3000;
+
+// Configure Socket.IO with fallbacks for Cloud Run
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  },
+  // Enable polling fallback since WebSockets may not work
+  transports: ['websocket', 'polling']
+});
+
 const demoRoom = {
-    id: 'cascadia', // Used to access room info
-    name: 'Cascadia Hackathon', // Used to display your current event
+    id: 'cascadia',
+    name: 'Cascadia Hackathon',
     users: []
 };
 
-// Someone has connected to the server
-socketIO.on("connection", (socket) => {
+io.on("connection", (socket) => {
     console.log("New user connected");
-
-    socketIO.join(demoRoom.id);
+    
+    // Fix: use socket.join() instead of socketIO.join()
+    socket.join(demoRoom.id);
 
     socket.on("disconnect", () => {
         console.log("Client disconnected");
@@ -27,7 +42,7 @@ app.get('/', (req, res) => {
     res.send('Hello World!');
 });
 
-app.listen(3000, () => {   
-    console.log('Server is running on http://localhost:3000');
-    console.log('Press CTRL+C to stop the server');
+// Use the HTTP server that includes Socket.IO
+server.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });
