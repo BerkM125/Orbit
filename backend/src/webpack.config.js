@@ -7,12 +7,15 @@ module.exports = {
   externals: [nodeExternals()],
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'bundle.js',
+    filename: 'index.js', // Keep as index.js for Cloud Functions
+    library: {
+      type: 'commonjs2'
+    },
     clean: true
   },
   mode: 'production',
   optimization: {
-    minimize: false // Keep readable for debugging
+    minimize: false // Keep readable for debugging Cloud Functions
   },
   resolve: {
     extensions: ['.js', '.json']
@@ -25,10 +28,18 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env']
+            presets: [
+              ['@babel/preset-env', {
+                targets: {
+                  node: '18'
+                }
+              }]
+            ]
           }
         }
       }
     ]
-  }
+  },
+  // Ensure proper exports for Cloud Functions
+  plugins: []
 };
