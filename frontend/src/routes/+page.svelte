@@ -47,14 +47,36 @@
                 </div>
             `);
 
-        const marker = new mapboxgl.Marker({ color: color })
+        // Create custom circular marker element
+        const el = document.createElement('div');
+        el.className = 'circular-marker';
+        el.style.cssText = `
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: ${color};
+            border: 3px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+        `;
+        
+        // Add initials or icon to the marker (optional)
+        el.textContent = person.name.charAt(0).toUpperCase();
+
+        const marker = new mapboxgl.Marker({ element: el })
             .setLngLat(person.getCoords())
             .setPopup(popup)
             .addTo(map);
         
         mapMarkers[person.id] = marker;
         
-        marker.getElement().addEventListener('click', (e) => {
+        el.addEventListener('click', (e) => {
             console.log('Clicked on', person.name);
         });        
     }
