@@ -10,82 +10,75 @@ app.use(cors());
 
 // Demo room data
 const demoRoom = {
-    id: 'cascadia',
-    name: 'Cascadia Hackathon',
-    users: []
+  id: 'cascadia',
+  name: 'Cascadia Hackathon',
+  users: []
 };
 
-// Socket.IO setup
-let io;
-let httpServer;
+// Create HTTP server from Express app
+const httpServer = createServer(app);
 
-function initializeSocketIO() {
-    if (!httpServer) {
-        httpServer = createServer();
-        io = new Server(httpServer, {
-            cors: {
-                origin: "*",
-                methods: ["GET", "POST"]
-            },
-            transports: ['websocket', 'polling']
-        });
+// Initialize Socket.IO with the same server
+const io = new Server(httpServer, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  },
+  transports: ['websocket', 'polling']
+});
 
-        io.on("connection", (socket) => {
-            console.log("New user connected");
-            socket.join(demoRoom.id);
-
-            socket.on("join-room", (data) => {
-                const { name, userId } = data;
-                demoRoom.users.push({ name, userId, socketId: socket.id });
-                socket.to(demoRoom.id).emit("user-joined", { name, userId });
-                socket.emit("room-data", demoRoom);
-            });
-
-            socket.on("send-message", (data) => {
-                socket.to(demoRoom.id).emit("receive-message", data);
-            });
-
-            socket.on("disconnect", () => {
-                console.log("Client disconnected");
-                demoRoom.users = demoRoom.users.filter(user => user.socketId !== socket.id);
-                socket.to(demoRoom.id).emit("user-left", { socketId: socket.id });
-            });
-        });
-
-        // Start Socket.IO server on different port
-        const socketPort = process.env.SOCKET_PORT || 8080;
-        httpServer.listen(socketPort, () => {
-            console.log(`Socket.IO server running on port ${socketPort}`);
-        });
-    }
-}
+// Socket.IO event handlers
+io.on("connection", (socket) => {
+  console.log("New user connected");
+  socket.join(demoRoom.id);
+  
+  socket.on("join-room", (data) => {
+    const { name, userId } = data;
+    demoRoom.users.push({
+      name,
+      userId,
+      socketId: socket.id
+    });
+    
+    socket.to(demoRoom.id).emit("user-joined", { name, userId });
+    socket.emit("room-data", demoRoom);
+  });
+  
+  socket.on("send-message", (data) => {
+    socket.to(demoRoom.id).emit("receive-message", data);
+  });
+  
+  socket.on("disconnect", () => {
+    console.log("Client disconnected");
+    demoRoom.users = demoRoom.users.filter(user => user.socketId !== socket.id);
+    socket.to(demoRoom.id).emit("user-left", { socketId: socket.id });
+  });
+});
 
 // Express routes
 app.get('/', (req, res) => {
-    initializeSocketIO();
-    res.json({
-        message: 'Socket.IO Chat Server',
-        room: demoRoom,
-        socketPort: process.env.SOCKET_PORT || 8080,
-        endpoints: {
-            '/': 'Server info',
-            '/room': 'Get room data',
-            '/health': 'Health check'
-        }
-    });
+  res.json({
+    message: 'Socket.IO Chat Server',
+    room: demoRoom,
+    endpoints: {
+      '/': 'Server info',
+      '/room': 'Get room data',  
+      '/health': 'Health check'
+    }
+  });
 });
 
 app.get('/room', (req, res) => {
-    res.json(demoRoom);
+  res.json(demoRoom);
 });
 
 app.get('/health', (req, res) => {
-    res.json({ 
-        status: 'healthy', 
-        timestamp: new Date().toISOString(),
-        users: demoRoom.users.length 
-    });
+  res.json({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    users: demoRoom.users.length
+  });
 });
 
-// Register the HTTP function
+// Register the HTTP function with the Express app (not the HTTP server)
 functions.http('chatServer', app);
