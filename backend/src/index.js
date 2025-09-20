@@ -1,40 +1,86 @@
 const express = require('express');
 const cors = require('cors');
-const http = require('http'); // Import the http module
-const { Server } = require('socket.io'); // Import the Server class
+const { createServer } = require('http');
+const { Server } = require('socket.io');
 
+// Create Express app
 const app = express();
-const server = http.createServer(app); // Create an HTTP server from the Express app
-const io = new Server(server, {
-    cors: {
-        origin: '*', // Allow all origins for simplicity in this example
-    },
-});
-
-// Just a demo room for now
-const demoRoom = {
-    id: 'cascadia',
-    name: 'Cascadia Hackathon',
-    users: []
-};
-
-// All socket connection logic inside here
-io.on("connection", (socket) => {
-    console.log("New client connected", socket.id);
-
-    socket.on("join", (data) => {
-        const roomID = data.roomID;
-        console.log(`Socket ${socket.id} requested to join room: ${roomID}`);
-    });
-});
-
 app.use(cors());
 
-app.get('/', (req, res) => {
-    res.send('Established connection to server home.');
+// Demo room data
+const demoRoom = {
+  id: 'cascadia',
+  name: 'Cascadia Hackathon',
+  users: []
+};
+
+// Create HTTP server from Express app
+const httpServer = createServer(app);
+
+// Initialize Socket.IO with the same server
+const io = new Server(httpServer, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  },
+  transports: ['websocket', 'polling']
 });
 
-// Listen on the shared server instance, not the Express app
-server.listen(3000, () => { 
-    console.log('Server is running on http://localhost:3000');
+// Socket.IO event handlers
+io.on("connection", (socket) => {
+  console.log("New user connected");
+  socket.join(demoRoom.id);
+  
+  socket.on("join-room", (data) => {
+    const { name, userId } = data;
+    demoRoom.users.push({
+      name,
+      userId,
+      socketId: socket.id
+    });
+    
+    socket.to(demoRoom.id).emit("user-joined", { name, userId });
+    socket.emit("room-data", demoRoom);
+  });
+  
+  socket.on("send-message", (data) => {
+    socket.to(demoRoom.id).emit("receive-message", data);
+  });
+  
+  socket.on("disconnect", () => {
+    console.log("Client disconnected");
+    demoRoom.users = demoRoom.users.filter(user => user.socketId !== socket.id);
+    socket.to(demoRoom.id).emit("user-left", { socketId: socket.id });
+  });
+});
+
+// Express routes
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Socket.IO Chat Server',
+    room: demoRoom,
+    endpoints: {
+      '/': 'Server info',
+      '/room': 'Get room data',  
+      '/health': 'Health check'
+    }
+  });
+});
+
+app.get('/room', (req, res) => {
+  res.json(demoRoom);
+});
+
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    users: demoRoom.users.length
+  });
+});
+
+// CRITICAL: Listen on the PORT environment variable for Cloud Run
+const port = process.env.PORT || 8080;
+httpServer.listen(port, () => {
+  console.log(`Server running on port ${port}`);
 });
