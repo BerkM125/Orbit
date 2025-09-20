@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "User Profile Schema",
+  "description": "Schema for geo-based professional networking app user profiles",
+  "type": "object",
+  "required": [
+    "firstName",
+    "lastName", 
+    "linkedinUrl",
+    "bio",
+    "headshotImage"
+  ],
+  "properties": {
+    "firstName": {
+      "type": "string",
+      "maxLength": 50,
+      "description": "User's first name"
+    },
+    "lastName": {
+      "type": "string", 
+      "maxLength": 50,
+      "description": "User's last name"
+    },
+    "linkedinUrl": {
+      "type": "string",
+      "pattern": "^https://(www\\.)?linkedin\\.com/in/[a-zA-Z0-9-]+/?$",
+      "description": "Valid LinkedIn profile URL"
+    },
+    "bio": {
+      "type": "string",
+      "maxLength": 500,
+      "description": "Professional bio/summary"
+    },
+    "headshotImage": {
+      "type": "string",
+      "pattern": "\\.(jpg|jpeg|png|gif|webp)$",
+      "description": "URL or path to headshot image"
+    }
+  },
+  "additionalProperties": false
+}
