@@ -11,13 +11,13 @@ async function getLangflowResults(searchQuery) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            "x-api-key": "sk-hxsc7zBoVHc1FP1TqSzrki0O3wviyHEg_yU6W5pDW8A"
+            "x-api-key": "sk--G_rLL1vkXp5BaYAGF1WiNpTD57SQyANqbzepsXc3Qo"
         },
         body: JSON.stringify(payload)
     };
 
     try {
-        const response = await fetch('https://langflow-725514508091.us-west1.run.app/api/v1/run/96b9e326-914f-490e-8c36-e6cfc9659d35', options);
+        const response = await fetch('https://langflow-725514508091.us-west1.run.app/api/v1/run/d1892cf6-cf19-41db-85f8-dde5eb346b57', options);
         
         if (!response.ok) { // Check for HTTP errors (e.g., 404 Not Found)
             throw new Error(`HTTP error! status: ${response.status}`);
