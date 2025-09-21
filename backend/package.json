@@ -1,0 +1,15 @@
+{
+  "name": "cascadia-networking-backend",
+  "version": "1.0.0",
+  "description": "Backend for Cascadia Professional Networking App",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "vectorize": "node scripts/vectorize-profiles.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.43.4",
+    "dotenv": "^16.4.5",
+    "openai": "^4.47.1"
+  }
+}

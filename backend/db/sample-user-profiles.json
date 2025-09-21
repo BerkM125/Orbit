@@ -1,0 +1,177 @@
+[
+  {
+    "firstName": "Maya",
+    "lastName": "Rivera",
+    "linkedinUrl": "https://linkedin.com/in/maya-rivera",
+    "bio": "Senior Software Engineer at Meta focusing on scalable backend systems and real-time messaging. Launched a low-latency event bus used across 3 products; plays trumpet and bikes to work. Interested in distributed tracing, SRE, and product-led performance wins.",
+    "headshotImage": "maya_rivera.jpg"
+  },
+  {
+    "firstName": "Arjun",
+    "lastName": "Patel",
+    "linkedinUrl": "https://linkedin.com/in/arjunpatel",
+    "bio": "Computer Science student at UW building full‑stack startups. Built an indie ticketing app with serverless functions and Stripe; coffeeshop connoisseur and weekend open-water swimmer. Loves cloud infra and developer experience.",
+    "headshotImage": "arjun_patel.png"
+  },
+  {
+    "firstName": "Simone",
+    "lastName": "Dupont",
+    "linkedinUrl": "https://linkedin.com/in/simone-dupont",
+    "bio": "Staff Engineer (Payments) who designed a fraud-detection pipeline that reduced false positives by 27%. Cat parent, amateur ceramicist, and obsessed with data pipelines and ML feature stores.",
+    "headshotImage": "simone_dupont.webp"
+  },
+  {
+    "firstName": "Leo",
+    "lastName": "Nguyen",
+    "linkedinUrl": "https://linkedin.com/in/leonguyen",
+    "bio": "Senior SWE at a fintech startup; led migration from monolith to microservices and cut deploy times in half. Enjoys climbing, synthwave playlists, and building low-cost telemetry for legacy systems.",
+    "headshotImage": "leo_nguyen.jpeg"
+  },
+  {
+    "firstName": "Priya",
+    "lastName": "Singh",
+    "linkedinUrl": "https://linkedin.com/in/priyasingh",
+    "bio": "Recent grad and ML engineering intern turned full-time at a health-tech company. Co-authored an internal model that speeds diagnosis triage; avid baker and fixture at local hackathons.",
+    "headshotImage": "priya_singh.jpg"
+  },
+  {
+    "firstName": "Marcus",
+    "lastName": "Hall",
+    "linkedinUrl": "https://linkedin.com/in/marcus-hall",
+    "bio": "Engineering Manager who started as a frontend dev. Runs a mentorship program, prototypes UX-first tooling, and plays trombone in a community jazz band. Passionate about accessibility and performance.",
+    "headshotImage": "marcus_hall.png"
+  },
+  {
+    "firstName": "Yara",
+    "lastName": "Haddad",
+    "linkedinUrl": "https://linkedin.com/in/yara-haddad",
+    "bio": "Mobile dev (iOS) who shipped an AR shopping feature. Former design student who loves pixel-perfect interfaces, pattern libraries, and long-distance running.",
+    "headshotImage": "yara_haddad.gif"
+  },
+  {
+    "firstName": "Ethan",
+    "lastName": "Brooks",
+    "linkedinUrl": "https://linkedin.com/in/ethanbrooks",
+    "bio": "Infrastructure Engineer who architected a multi-region Kubernetes platform and contributed tools to reduce incident toil. Amateur beekeeper and weekend violinist.",
+    "headshotImage": "ethan_brooks.png"
+  },
+  {
+    "firstName": "Chloe",
+    "lastName": "Romano",
+    "linkedinUrl": "https://linkedin.com/in/chloeromano",
+    "bio": "Data Engineer obsessed with clean schemas and observability. Built a CDC pipeline to sync legacy databases to a lakehouse; sketches portraits for fun.",
+    "headshotImage": "chloe_romano.jpg"
+  },
+  {
+    "firstName": "Kenji",
+    "lastName": "Sato",
+    "linkedinUrl": "https://linkedin.com/in/kenjisato",
+    "bio": "Senior SWE specializing in graphics and real-time rendering. Implemented a GPU-accelerated compositor; loves retro games and microcontroller projects.",
+    "headshotImage": "kenji_sato.webp"
+  },
+  {
+    "firstName": "Lucia",
+    "lastName": "Alvarez",
+    "linkedinUrl": "https://linkedin.com/in/lucia-alvarez",
+    "bio": "Product Engineer who shipped analytics features used by 10k+ customers. Dabbles in generative art and mentors high-school coders on weekends.",
+    "headshotImage": "lucia_alvarez.jpeg"
+  },
+  {
+    "firstName": "Noah",
+    "lastName": "Kim",
+    "linkedinUrl": "https://linkedin.com/in/noahkim",
+    "bio": "Back-end engineer at a cloud provider focused on cost-efficient storage systems. Runs a tiny cookbook blog and organizes local hack nights.",
+    "headshotImage": "noah_kim.png"
+  },
+  {
+    "firstName": "Zoe",
+    "lastName": "Carter",
+    "linkedinUrl": "https://linkedin.com/in/zoecarter",
+    "bio": "Student (CS) building an accessible note-taking app. Interested in human-centered ML and UX for neurodiverse users; teaches skateboarding to kids.",
+    "headshotImage": "zoe_carter.jpg"
+  },
+  {
+    "firstName": "Amir",
+    "lastName": "Rahman",
+    "linkedinUrl": "https://linkedin.com/in/amirrahman",
+    "bio": "Full-stack engineer who built a privacy-first chat prototype; previously interned at a security firm. Collects mechanical keyboards and experiments with async Rust.",
+    "headshotImage": "amir_rahman.webp"
+  },
+  {
+    "firstName": "Hannah",
+    "lastName": "Zhao",
+    "linkedinUrl": "https://linkedin.com/in/hannahzhao",
+    "bio": "Senior SWE (Search) who improved query latency and relevance. Hosts a book club about systems design and bakes extraordinary tarts during sprints.",
+    "headshotImage": "hannah_zhao.jpeg"
+  },
+  {
+    "firstName": "Diego",
+    "lastName": "Morales",
+    "linkedinUrl": "https://linkedin.com/in/diego-morales",
+    "bio": "DevOps engineer who automated CI/CD across 12 microservices. Weekend salsa dancer and maker of elaborate spreadsheets to track project health.",
+    "headshotImage": "diego_morales.jpg"
+  },
+  {
+    "firstName": "Aisha",
+    "lastName": "Khan",
+    "linkedinUrl": "https://linkedin.com/in/aisha-khan",
+    "bio": "Software Engineer interested in edge computing and IoT. Built a low-power sensor network for urban gardens; paints watercolors in her free time.",
+    "headshotImage": "aisha_khan.png"
+  },
+  {
+    "firstName": "Ben",
+    "lastName": "O'Connor",
+    "linkedinUrl": "https://linkedin.com/in/ben-oconnor",
+    "bio": "SRE who enjoys forensic debugging and incident write-ups. Runs an open-source pagerduty-style playbook and coaches high-school robotics teams.",
+    "headshotImage": "ben_oconnor.gif"
+  },
+  {
+    "firstName": "Mei",
+    "lastName": "Chen",
+    "linkedinUrl": "https://linkedin.com/in/meichen",
+    "bio": "Algorithm engineer working on recommendation systems. Built an explainability toolkit for stakeholders and collects vintage cameras.",
+    "headshotImage": "mei_chen.jpg"
+  },
+  {
+    "firstName": "Nikolai",
+    "lastName": "Petrov",
+    "linkedinUrl": "https://linkedin.com/in/nikolai-petrov",
+    "bio": "Machine Learning engineer focused on productionizing models at scale. Loves long-distance cycling and contributing to open-source optimization libs.",
+    "headshotImage": "nikolai_petrov.png"
+  },
+  {
+    "firstName": "Sara",
+    "lastName": "Goldstein",
+    "linkedinUrl": "https://linkedin.com/in/saragoldstein",
+    "bio": "Frontend engineer and design systems advocate. Rewrote a component library used across three teams; hosts a podcast about creative tooling.",
+    "headshotImage": "sara_goldstein.jpeg"
+  },
+  {
+    "firstName": "Victor",
+    "lastName": "Alvarez",
+    "linkedinUrl": "https://linkedin.com/in/victor-alvarez",
+    "bio": "Startup CTO who built a telemetry stack from scratch; moonlights as a DJ and mentors founders on product-market fit.",
+    "headshotImage": "victor_alvarez.jpg"
+  },
+  {
+    "firstName": "Ingrid",
+    "lastName": "Berg",
+    "linkedinUrl": "https://linkedin.com/in/ingridberg",
+    "bio": "Student researcher in HCI designing collaborative VR tools. Co-authored a paper on shared spatial annotations and runs a small coffee-roasting side hustle.",
+    "headshotImage": "ingrid_berg.png"
+  },
+  {
+    "firstName": "Omar",
+    "lastName": "Farouk",
+    "linkedinUrl": "https://linkedin.com/in/omar-farouk",
+    "bio": "Security engineer who spearheaded threat-hunting automation. Amateur astronomer and builds secure firmware for hobby hardware projects.",
+    "headshotImage": "omar_farouk.webp"
+  },
+  {
+    "firstName": "Tess",
+    "lastName": "Martinez",
+    "linkedinUrl": "https://linkedin.com/in/tess-martinez",
+    "bio": "Senior PM turned SWE—bridges product and engineering for mobile experiences. Organized a citywide coding sprint and coaches youth soccer.",
+    "headshotImage": "tess_martinez.jpg"
+  }
+]
