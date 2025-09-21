@@ -8,7 +8,9 @@
     "lastName", 
     "linkedinUrl",
     "bio",
-    "headshotImage"
+    "headshotImage",
+    "company",
+    "location"
   ],
   "properties": {
     "firstName": {
@@ -35,6 +37,31 @@
       "type": "string",
       "pattern": "\\.(jpg|jpeg|png|gif|webp)$",
       "description": "URL or path to headshot image"
+    },
+    "company": {
+      "type": "string",
+      "maxLength": 100,
+      "description": "User's current company"
+    },
+    "location": {
+      "type": "object",
+      "properties": {
+        "latitude": {
+          "type": "number",
+          "minimum": -90,
+          "maximum": 90,
+          "description": "Latitude coordinate"
+        },
+        "longitude": {
+          "type": "number",
+          "minimum": -180,
+          "maximum": 180,
+          "description": "Longitude coordinate"
+        }
+      },
+      "required": ["latitude", "longitude"],
+      "additionalProperties": false,
+      "description": "User's location coordinates"
     }
   },
   "additionalProperties": false
