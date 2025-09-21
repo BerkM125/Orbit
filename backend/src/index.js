@@ -48,28 +48,171 @@ const io = new Server(httpServer, {
 
 // Socket.IO event handlers
 io.on('connection', (socket) => {
-	console.log('New user connected');
 	socket.join(demoRoom.id);
 
 	// Join room command
 	socket.on('join-room', async (userData) => {
 		try {
-			// Create or update the user profile in Supabase and get back the UUID
-			const updatedUserData = await createOrUpdateUserProfile(supabase, userData);
-			// Add the user to the room with their Supabase UUID
-			addUserToRoom(updatedUserData, socket);
-			// Send the updated user data (with UUID) back to the client
-			socket.emit('update-data', demoRoom);
+			// Check if user already exists in Supabase by id
+			const { data: existingUser, error: fetchError } = await supabase
+				.from('documents')
+				.select(
+					'id, first_name, last_name, linkedin_url, bio, headshot_image, created_at, updated_at, latitude, longitude'
+				)
+				.eq('id', userData.id)
+				.single();
+
+			if (fetchError && fetchError.code !== 'PGRST116') {
+				// PGRST116 = no rows found
+				console.error('Error checking for existing user:', fetchError);
+				socket.emit('join-error', { message: 'Database error' });
+				return;
+			}
+
+			if (existingUser) {
+				// Check if user has completed their profile setup (not placeholder values)
+				const isProfileComplete =
+					existingUser.first_name &&
+					existingUser.first_name.trim() &&
+					existingUser.first_name !== 'SETUP_REQUIRED' &&
+					existingUser.last_name &&
+					existingUser.last_name.trim() &&
+					existingUser.last_name !== 'SETUP_REQUIRED';
+
+				if (!isProfileComplete) {
+					// Emit profile-setup-required event for incomplete profiles
+					socket.emit('profile-setup-required', {
+						id: userData.id,
+						message: 'Profile setup required - incomplete profile'
+					});
+					return;
+				}
+
+				// Update user's location in Supabase
+				const { error: updateError } = await supabase
+					.from('documents')
+					.update({
+						latitude: userData.location.latitude,
+						longitude: userData.location.longitude,
+						updated_at: new Date().toISOString()
+					})
+					.eq('id', userData.id);
+
+				if (updateError) {
+					console.error('Error updating user location:', updateError);
+				}
+
+				// Create updated user data for the room
+				const updatedUserData = {
+					id: existingUser.id,
+					first_name: existingUser.first_name,
+					last_name: existingUser.last_name,
+					location: userData.location, // Use fresh location from client
+					profileInfo: {
+						linkedIn: existingUser.linkedin_url,
+						bio: existingUser.bio,
+						headshot: existingUser.headshot_image,
+						joinedAt: existingUser.created_at,
+						lastActive: new Date().toISOString()
+					}
+				};
+
+				// Add user to room
+				addUserToRoom(updatedUserData, socket);
+
+				// Send room data to client for existing user
+				socket.emit('update-data', demoRoom);
+			} else {
+				// Create minimal profile for new user with placeholder values
+				const newUserData = {
+					id: userData.id, // Use the auth user id
+					first_name: 'SETUP_REQUIRED', // Placeholder that satisfies NOT NULL and check constraints
+					last_name: 'SETUP_REQUIRED', // Placeholder that satisfies NOT NULL and check constraints
+					linkedin_url: `https://linkedin.com/in/user-${userData.id}`, // Placeholder LinkedIn URL
+					bio: '', // Empty string for bio
+					headshot_image:
+						'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y.jpg', // Default headshot
+					latitude: userData.location.latitude,
+					longitude: userData.location.longitude,
+					phone_number: (() => {
+						const randomDigits = Math.floor(Math.random() * 10000000)
+							.toString()
+							.padStart(7, '0');
+						return `206-${randomDigits.slice(0, 3)}-${randomDigits.slice(3)}`;
+					})(),
+					created_at: new Date().toISOString(),
+					updated_at: new Date().toISOString()
+				};
+
+				// Insert new user into Supabase
+				const { error: insertError } = await supabase
+					.from('documents')
+					.insert([newUserData]);
+
+				if (insertError) {
+					console.error('Error creating new user profile:', insertError);
+					socket.emit('join-error', { message: 'Failed to create user profile' });
+					return;
+				}
+
+				// Emit profile-setup-required event for new users
+				socket.emit('profile-setup-required', {
+					id: userData.id,
+					message: 'Profile setup required for new user'
+				});
+			}
 		} catch (error) {
 			console.error('Error processing join request:', error);
 			socket.emit('join-error', { message: 'Failed to process join request' });
 		}
 	});
 
+	// Handle profile setup completion
+	socket.on('profile-setup-complete', async (userData) => {
+		try {
+			// Fetch the updated user profile from Supabase
+			const { data: updatedUser, error: fetchError } = await supabase
+				.from('documents')
+				.select(
+					'id, first_name, last_name, linkedin_url, bio, headshot_image, created_at, updated_at, latitude, longitude'
+				)
+				.eq('id', userData.id)
+				.single();
+
+			if (fetchError || !updatedUser) {
+				console.error('Error fetching updated user profile:', fetchError);
+				socket.emit('join-error', { message: 'Failed to fetch updated profile' });
+				return;
+			}
+
+			// Create user data for the room
+			const roomUserData = {
+				id: updatedUser.id,
+				first_name: updatedUser.first_name,
+				last_name: updatedUser.last_name,
+				location: userData.location, // Use current location
+				profileInfo: {
+					linkedIn: updatedUser.linkedin_url,
+					bio: updatedUser.bio,
+					headshot: updatedUser.headshot_image,
+					joinedAt: updatedUser.created_at,
+					lastActive: new Date().toISOString()
+				}
+			};
+
+			// Add user to room
+			addUserToRoom(roomUserData, socket);
+
+			// Send room data to client
+			socket.emit('update-data', demoRoom);
+		} catch (error) {
+			console.error('Error handling profile setup completion:', error);
+		}
+	});
+
 	// Client will emit this to send data to the server
 	socket.on('send-location', (userData) => {
 		try {
-			console.log('send-location: ', userData);
 			processUserLocation(userData);
 		} catch (error) {
 			console.error('Error processing location:', error);
@@ -78,7 +221,6 @@ io.on('connection', (socket) => {
 
 	// Handle user disconnects
 	socket.on('disconnect', () => {
-		console.log('Client disconnected');
 		removeUser(socket.id);
 	});
 });
@@ -86,7 +228,7 @@ io.on('connection', (socket) => {
 // Express routes
 app.get('/', (req, res) => {
 	res.json({
-		message: 'BubbleUp Backend is running!',
+		message: 'backend is running!',
 		room: demoRoom
 	});
 });
@@ -113,9 +255,10 @@ httpServer.listen(port, async () => {
 	try {
 		const userProfiles = await getAllUserProfiles(supabase);
 		await initializeRoomUsers(userProfiles);
-		console.log('Successfully initialized room with Supabase user profiles');
+		console.log(`Server initialized with ${userProfiles.length} user profiles from Supabase`);
 	} catch (error) {
-		console.error('Failed to initialize room with Supabase user profiles:', error);
+		console.error('Failed to initialize room with Supabase user profiles:', error.message);
+		console.error('Error details:', error);
 	}
 });
 

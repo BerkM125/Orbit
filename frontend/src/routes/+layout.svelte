@@ -10,54 +10,80 @@
 	import io from 'socket.io-client';
 	import { authStore } from '$lib/stores/auth.svelte.js';
 	import { localData } from '$lib/stores/data.svelte.js';
+	import { getCurrentLocation } from '$lib/geolocation.js';
 
 	let { children } = $props();
 	let socket = $state(null);
+	let loading = $state(true);
 
 	// Pages that don't require authentication
-	const publicPages = ['/login'];
+	const publicPages = ['/login', '/setup'];
 
 	// Turn all loaded users' data to a dictionary for easy retrieval
 	function convertDataToDict(data) {
 		let dict = {};
 		data.users.forEach((user) => {
-			if (user && user.userId) {
-				dict[user.userId] = user;
+			if (user && user.id) {
+				dict[user.id] = user;
 			}
 		});
 		return dict;
 	}
 
 	// Initialize socket connection for authenticated users
-	function initializeSocket() {
+	async function initializeSocket() {
 		if (!authStore.isAuthenticated || socket) return;
 
-		// Link to the Express app server running socketio
-		socket = io('http://localhost:3000');
+		try {
+			// Initialize socket connection
+			socket = io('http://localhost:3000');
+			console.log('Socket connection initialized');
 
-		// Join the server room with authenticated user data
-		const userData = {
-			userId: authStore.user.id,
-			name: authStore.user.user_metadata?.full_name || authStore.user.email,
-			email: authStore.user.email,
-			avatar_url: authStore.user.user_metadata?.avatar_url,
-			location: {
-				latitude: 47.6062, // Default location, will be updated with real location
-				longitude: -122.3321
-			}
-		};
+			// Get fresh geolocation
+			const location = await getCurrentLocation();
+			console.log('Current location obtained:', location);
 
-		socket.emit('join-room', userData);
+			// Join room with minimal data: id and fresh location
+			const joinData = {
+				id: authStore.user.id,
+				location
+			};
 
-		// Listen for requests to get this user's location
-		socket.on('get-location', () => {
-			socket.emit('send-location', userData);
-		});
+			socket.emit('join-room', joinData);
+			console.log('Emitted join-room with:', joinData);
 
-		// Listen for the server sending all user locations
-		socket.on('update-data', (data) => {
-			localData.dict = convertDataToDict(data);
-		});
+			// Listen for existing user data update
+			socket.on('update-data', (data) => {
+				console.log('Received update-data - existing user');
+				localData.dict = convertDataToDict(data);
+				loading = false; // User exists, data loaded, stop loading
+			});
+
+			// Listen for new user requiring profile setup
+			socket.on('profile-setup-required', (data) => {
+				console.log('Received profile-setup-required - new user needs setup');
+				loading = false; // Stop loading
+				goto('/setup'); // Redirect to setup for profile creation
+			});
+
+			// Listen for requests to get this user's location
+			socket.on('get-location', async () => {
+				const currentLocation = await getCurrentLocation();
+				socket.emit('send-location', {
+					id: authStore.user.id,
+					location: currentLocation
+				});
+			});
+
+			// Handle socket connection errors
+			socket.on('connect_error', (error) => {
+				console.error('Socket connection error:', error);
+				loading = false; // Stop loading on error
+			});
+		} catch (error) {
+			console.error('Error initializing socket:', error);
+			loading = false; // Stop loading on error
+		}
 	}
 
 	// Check authentication and redirect if necessary
@@ -67,18 +93,34 @@
 		const currentPath = page.url.pathname;
 		const isPublicPage = publicPages.includes(currentPath);
 
+		// Handle unauthenticated users
 		if (!authStore.isAuthenticated && !isPublicPage) {
+			loading = false; // Stop loading for unauthenticated users
 			goto('/login');
 			return;
 		}
 
+		// Handle authenticated users on login page
 		if (authStore.isAuthenticated && currentPath === '/login') {
-			goto('/profile');
+			goto('/');
+			return;
+		}
+
+		// Allow authenticated users on setup page (they might need to complete setup)
+		if (authStore.isAuthenticated && currentPath === '/setup') {
+			loading = false; // Stop loading on setup page
+			return;
+		}
+
+		// Handle unauthenticated users on public pages
+		if (!authStore.isAuthenticated && isPublicPage) {
+			loading = false; // Stop loading on public pages
 			return;
 		}
 
 		// Initialize socket for authenticated users
 		if (authStore.isAuthenticated) {
+			// Keep loading true until socket initialization completes
 			initializeSocket();
 		}
 	});
@@ -109,9 +151,16 @@
 			</a>
 		</nav>
 	{/if}
-	<main>
-		{@render children?.()}
-	</main>
+	{#if loading}
+		<div class="loading">
+			<div class="loading-spinner"></div>
+			<p>Loading...</p>
+		</div>
+	{:else}
+		<main>
+			{@render children?.()}
+		</main>
+	{/if}
 </div>
 
 <style>
@@ -151,5 +200,38 @@
 
 	.container {
 		flex: 1;
+	}
+
+	.loading {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		min-height: 100vh;
+		gap: 1rem;
+	}
+
+	.loading-spinner {
+		width: 3rem;
+		height: 3rem;
+		border: 3px solid var(--bg-2);
+		border-top: 3px solid var(--accent);
+		border-radius: 50%;
+		animation: spin 1s linear infinite;
+	}
+
+	@keyframes spin {
+		0% {
+			transform: rotate(0deg);
+		}
+		100% {
+			transform: rotate(360deg);
+		}
+	}
+
+	.loading p {
+		margin: 0;
+		font-size: 1.1rem;
+		color: var(--text-2);
 	}
 </style>

@@ -3,30 +3,29 @@ var { demoRoom, globalUsersProcessed, removeUser, updateUserData } = require('./
 // Process the user location and update global database with local modules
 // userData is sent from the client via socket connection
 function processUserLocation(userData) {
-	console.log('Received client data: ', userData);
 	globalUsersProcessed++;
-	updateUserData(userData.userId, { location: userData.location });
+	updateUserData(userData.id, { location: userData.location });
 
-	// Only if all users have been processed can we log the full data
-	// GET RID OF THE LENGTH-1 FOR PRODUCTION!!
+	// Reset counter when all users processed
 	if (globalUsersProcessed === demoRoom.users.length - 1) {
-		console.log('All users processed: ');
-		console.log(demoRoom.users);
 		globalUsersProcessed = 0;
 	}
 }
 
 // Add user to the room given user data provided by client
 function addUserToRoom(userData, socketConnection) {
-	const { name, userId, location, linkedin_url, bio, headshot_url } = userData;
+	const { first_name, last_name, id, location, profileInfo } = userData;
+
+	// Remove any existing user with the same id to prevent duplicates
+	demoRoom.users = demoRoom.users.filter((user) => user.id !== id);
+
 	const userContainer = {
-		name: name,
-		userId: userId,
-		linkedin_url: linkedin_url,
-		bio: bio,
-		headshot_image: headshot_url,
-		socketId: socketConnection.id,
-		location: location
+		id: id,
+		first_name: first_name,
+		last_name: last_name,
+		location: location,
+		profileInfo: profileInfo,
+		socketId: socketConnection.id
 	};
 
 	demoRoom.users.push(userContainer);
