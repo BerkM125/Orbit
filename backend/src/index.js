@@ -41,14 +41,11 @@ const io = new Server(httpServer, {
 
 // Socket.IO event handlers
 io.on('connection', (socket) => {
-	console.log('New user connected');
 	socket.join(demoRoom.id);
 
 	// Join room command
 	socket.on('join-room', async (userData) => {
 		try {
-			console.log('Received join-room request:', userData);
-
 			// Check if user already exists in Supabase by id
 			const { data: existingUser, error: fetchError } = await supabase
 				.from('documents')
@@ -66,7 +63,23 @@ io.on('connection', (socket) => {
 			}
 
 			if (existingUser) {
-				console.log('Existing user found, updating location and returning data');
+				// Check if user has completed their profile setup (not placeholder values)
+				const isProfileComplete =
+					existingUser.first_name &&
+					existingUser.first_name.trim() &&
+					existingUser.first_name !== 'SETUP_REQUIRED' &&
+					existingUser.last_name &&
+					existingUser.last_name.trim() &&
+					existingUser.last_name !== 'SETUP_REQUIRED';
+
+				if (!isProfileComplete) {
+					// Emit profile-setup-required event for incomplete profiles
+					socket.emit('profile-setup-required', {
+						id: userData.id,
+						message: 'Profile setup required - incomplete profile'
+					});
+					return;
+				}
 
 				// Update user's location in Supabase
 				const { error: updateError } = await supabase
@@ -103,16 +116,15 @@ io.on('connection', (socket) => {
 				// Send room data to client for existing user
 				socket.emit('update-data', demoRoom);
 			} else {
-				console.log('New user detected, creating basic profile and requesting full setup');
-
-				// Create minimal profile for new user with just id and location
+				// Create minimal profile for new user with placeholder values
 				const newUserData = {
-					id: userData.id, // Use the id as the id for Supabase
-					first_name: 'New',
-					last_name: 'User',
-					linkedin_url: `https://linkedin.com/in/yifan-wen`,
-					bio: 'test bio',
-					headshot_image: 'https://avatars.githubusercontent.com/u/34758569?v=4.jpg',
+					id: userData.id, // Use the auth user id
+					first_name: 'SETUP_REQUIRED', // Placeholder that satisfies NOT NULL and check constraints
+					last_name: 'SETUP_REQUIRED', // Placeholder that satisfies NOT NULL and check constraints
+					linkedin_url: `https://linkedin.com/in/user-${userData.id}`, // Placeholder LinkedIn URL
+					bio: '', // Empty string for bio
+					headshot_image:
+						'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y.jpg', // Default headshot
 					latitude: userData.location.latitude,
 					longitude: userData.location.longitude,
 					phone_number: (() => {
@@ -148,10 +160,52 @@ io.on('connection', (socket) => {
 		}
 	});
 
+	// Handle profile setup completion
+	socket.on('profile-setup-complete', async (userData) => {
+		try {
+			// Fetch the updated user profile from Supabase
+			const { data: updatedUser, error: fetchError } = await supabase
+				.from('documents')
+				.select(
+					'id, first_name, last_name, linkedin_url, bio, headshot_image, created_at, updated_at, latitude, longitude'
+				)
+				.eq('id', userData.id)
+				.single();
+
+			if (fetchError || !updatedUser) {
+				console.error('Error fetching updated user profile:', fetchError);
+				socket.emit('join-error', { message: 'Failed to fetch updated profile' });
+				return;
+			}
+
+			// Create user data for the room
+			const roomUserData = {
+				id: updatedUser.id,
+				first_name: updatedUser.first_name,
+				last_name: updatedUser.last_name,
+				location: userData.location, // Use current location
+				profileInfo: {
+					linkedIn: updatedUser.linkedin_url,
+					bio: updatedUser.bio,
+					headshot: updatedUser.headshot_image,
+					joinedAt: updatedUser.created_at,
+					lastActive: new Date().toISOString()
+				}
+			};
+
+			// Add user to room
+			addUserToRoom(roomUserData, socket);
+
+			// Send room data to client
+			socket.emit('update-data', demoRoom);
+		} catch (error) {
+			console.error('Error handling profile setup completion:', error);
+		}
+	});
+
 	// Client will emit this to send data to the server
 	socket.on('send-location', (userData) => {
 		try {
-			console.log('send-location: ', userData);
 			processUserLocation(userData);
 		} catch (error) {
 			console.error('Error processing location:', error);
@@ -160,7 +214,6 @@ io.on('connection', (socket) => {
 
 	// Handle user disconnects
 	socket.on('disconnect', () => {
-		console.log('Client disconnected');
 		removeUser(socket.id);
 	});
 });
@@ -185,15 +238,9 @@ httpServer.listen(port, async () => {
 
 	// Get and initialize user profiles from Supabase
 	try {
-		console.log('Starting Supabase initialization...');
 		const userProfiles = await getAllUserProfiles(supabase);
-		console.log(`Fetched ${userProfiles.length} user profiles from Supabase`);
-
 		await initializeRoomUsers(userProfiles);
-		console.log(
-			`Successfully initialized room with ${userProfiles.length} user profiles from Supabase`
-		);
-		console.log(`demoRoom now contains ${demoRoom.users.length} users`);
+		console.log(`Server initialized with ${userProfiles.length} user profiles from Supabase`);
 	} catch (error) {
 		console.error('Failed to initialize room with Supabase user profiles:', error.message);
 		console.error('Error details:', error);

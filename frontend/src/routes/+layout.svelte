@@ -17,7 +17,7 @@
 	let loading = $state(true);
 
 	// Pages that don't require authentication
-	const publicPages = ['/login'];
+	const publicPages = ['/login', '/setup'];
 
 	// Turn all loaded users' data to a dictionary for easy retrieval
 	function convertDataToDict(data) {
@@ -63,7 +63,7 @@
 			socket.on('profile-setup-required', (data) => {
 				console.log('Received profile-setup-required - new user needs setup');
 				loading = false; // Stop loading
-				goto('/signup'); // Redirect to signup for profile creation
+				goto('/setup'); // Redirect to setup for profile creation
 			});
 
 			// Listen for requests to get this user's location
@@ -102,7 +102,13 @@
 
 		// Handle authenticated users on login page
 		if (authStore.isAuthenticated && currentPath === '/login') {
-			goto('/profile');
+			goto('/');
+			return;
+		}
+
+		// Allow authenticated users on setup page (they might need to complete setup)
+		if (authStore.isAuthenticated && currentPath === '/setup') {
+			loading = false; // Stop loading on setup page
 			return;
 		}
 

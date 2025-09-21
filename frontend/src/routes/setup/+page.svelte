@@ -3,30 +3,31 @@
 	import { supabase } from '$lib/supabase.js';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
+	import { getCurrentLocation } from '$lib/geolocation.js';
+	import io from 'socket.io-client';
 
+	let loading = $state(false);
+	let error = $state('');
+	let success = $state('');
+
+	// Form data
 	let firstName = $state('');
 	let lastName = $state('');
 	let profilePicture = $state('');
 	let linkedin = $state('');
 	let bio = $state('');
-	let loading = $state(false);
-	let error = $state('');
-
-	// Redirect if not authenticated
-	onMount(() => {
-		if (!authStore.isAuthenticated) {
-			goto('/login');
-		}
-	});
 
 	async function handleSubmit() {
-		if (!firstName.trim() || !lastName.trim()) {
-			error = 'First name and last name are required';
-			return;
-		}
-
 		loading = true;
 		error = '';
+		success = '';
+
+		// Validate required fields
+		if (!firstName.trim() || !lastName.trim()) {
+			error = 'First name and last name are required';
+			loading = false;
+			return;
+		}
 
 		try {
 			// Update user profile in Supabase
@@ -38,33 +39,63 @@
 					headshot_image:
 						profilePicture.trim() ||
 						'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y.jpg',
-					linkedin_url: linkedin.trim() || `https://linkedin.com/in/user-${Date.now()}`,
+					linkedin_url:
+						linkedin.trim() || `https://linkedin.com/in/user-${authStore.user.id}`,
 					bio: bio.trim(),
 					updated_at: new Date().toISOString()
 				})
 				.eq('id', authStore.user.id);
 
 			if (updateError) {
-				console.error('Error updating profile:', updateError);
-				error = 'Failed to update profile. Please try again.';
-				return;
+				throw updateError;
 			}
 
-			// Redirect to home page after successful profile creation
-			goto('/');
+			success = 'Profile updated successfully!';
+
+			// Notify the server that profile setup is complete
+			try {
+				const socket = io('http://localhost:3000');
+				const location = await getCurrentLocation();
+
+				socket.emit('profile-setup-complete', {
+					id: authStore.user.id,
+					location
+				});
+
+				// Listen for the update-data event to know when we can redirect
+				socket.on('update-data', () => {
+					socket.disconnect();
+					goto('/');
+				});
+
+				// Fallback redirect after 3 seconds
+				setTimeout(() => {
+					socket.disconnect();
+					goto('/');
+				}, 3000);
+			} catch (err) {
+				console.error('Error notifying server of profile completion:', err);
+				// Still redirect even if socket fails
+				setTimeout(() => {
+					goto('/');
+				}, 1500);
+			}
 		} catch (err) {
-			console.error('Error during profile setup:', err);
-			error = 'An error occurred. Please try again.';
+			error = err.message || 'Failed to update profile';
 		} finally {
 			loading = false;
 		}
 	}
 </script>
 
-<div class="signup-container">
-	<div class="signup-card">
+<svelte:head>
+	<title>Setup Profile - Orbit</title>
+</svelte:head>
+
+<div class="setup-container">
+	<div class="setup-card">
 		<h1>Complete Your Profile</h1>
-		<p>Let's set up your professional profile to help others discover you.</p>
+		<p>Let's set up your profile to connect with professionals in your area.</p>
 
 		{#if error}
 			<div class="error-message">
@@ -72,16 +103,22 @@
 			</div>
 		{/if}
 
-		<form on:submit|preventDefault={handleSubmit}>
+		{#if success}
+			<div class="success-message">
+				{success}
+			</div>
+		{/if}
+
+		<form onsubmit={handleSubmit}>
 			<div class="form-group">
 				<label for="firstName">First Name *</label>
 				<input
 					id="firstName"
 					type="text"
 					bind:value={firstName}
-					placeholder="Enter your first name"
 					required
 					disabled={loading}
+					placeholder="Enter your first name"
 				/>
 			</div>
 
@@ -91,9 +128,9 @@
 					id="lastName"
 					type="text"
 					bind:value={lastName}
-					placeholder="Enter your last name"
 					required
 					disabled={loading}
+					placeholder="Enter your last name"
 				/>
 			</div>
 
@@ -103,20 +140,20 @@
 					id="profilePicture"
 					type="url"
 					bind:value={profilePicture}
-					placeholder="https://example.com/your-photo.jpg"
 					disabled={loading}
+					placeholder="https://example.com/your-photo.jpg"
 				/>
-				<small>Optional: Link to your profile picture (JPG, PNG, etc.)</small>
+				<small>Optional: Link to your profile picture</small>
 			</div>
 
 			<div class="form-group">
-				<label for="linkedin">LinkedIn Profile</label>
+				<label for="linkedin">LinkedIn URL</label>
 				<input
 					id="linkedin"
 					type="url"
 					bind:value={linkedin}
-					placeholder="https://linkedin.com/in/yourname"
 					disabled={loading}
+					placeholder="https://linkedin.com/in/yourprofile"
 				/>
 				<small>Optional: Your LinkedIn profile URL</small>
 			</div>
@@ -126,18 +163,19 @@
 				<textarea
 					id="bio"
 					bind:value={bio}
-					placeholder="Tell others about yourself, your interests, and what you do..."
-					rows="4"
 					disabled={loading}
+					placeholder="Tell others about yourself, your work, and interests..."
+					rows="4"
 				></textarea>
-				<small>Optional: A brief description about yourself</small>
+				<small>Optional: Brief description about yourself</small>
 			</div>
 
-			<button type="submit" disabled={loading || !firstName.trim() || !lastName.trim()}>
+			<button type="submit" disabled={loading} class="submit-btn">
 				{#if loading}
-					Creating Profile...
+					<span class="loading-spinner"></span>
+					Saving Profile...
 				{:else}
-					Complete Profile
+					Complete Setup
 				{/if}
 			</button>
 		</form>
@@ -145,46 +183,39 @@
 </div>
 
 <style>
-	.signup-container {
+	.setup-container {
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		min-height: 100vh;
-		padding: 1rem;
-		background: var(--bg-1);
+		padding: 2rem;
+		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 	}
 
-	.signup-card {
-		background: var(--bg-2);
+	.setup-card {
+		background: white;
+		padding: 3rem;
 		border-radius: 1rem;
-		padding: 2rem;
-		width: 100%;
+		box-shadow:
+			0 20px 25px -5px rgba(0, 0, 0, 0.1),
+			0 10px 10px -5px rgba(0, 0, 0, 0.04);
 		max-width: 500px;
-		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+		width: 100%;
 	}
 
 	h1 {
+		font-size: 2rem;
+		font-weight: bold;
+		margin-bottom: 0.5rem;
+		color: #1f2937;
 		text-align: center;
-		margin: 0 0 0.5rem 0;
-		color: var(--txt-1);
-		font-size: 1.5rem;
 	}
 
 	p {
+		color: #6b7280;
+		margin-bottom: 2rem;
+		line-height: 1.6;
 		text-align: center;
-		margin: 0 0 2rem 0;
-		color: var(--txt-2);
-		font-size: 0.9rem;
-	}
-
-	.error-message {
-		background: #fee;
-		color: #c33;
-		padding: 0.75rem;
-		border-radius: 0.5rem;
-		margin-bottom: 1rem;
-		font-size: 0.9rem;
-		border: 1px solid #fcc;
 	}
 
 	.form-group {
@@ -194,32 +225,32 @@
 	label {
 		display: block;
 		margin-bottom: 0.5rem;
-		color: var(--text-1);
 		font-weight: 500;
-		font-size: 0.9rem;
+		color: #374151;
 	}
 
 	input,
 	textarea {
 		width: 100%;
 		padding: 0.75rem;
-		border: 1px solid var(--bg-3);
+		border: 1px solid #d1d5db;
 		border-radius: 0.5rem;
-		background: var(--bg-1);
-		color: var(--text-1);
 		font-size: 1rem;
-		transition: border-color 0.2s ease;
-		box-sizing: border-box;
+		transition:
+			border-color 0.2s,
+			box-shadow 0.2s;
 	}
 
 	input:focus,
 	textarea:focus {
 		outline: none;
-		border-color: var(--accent);
+		border-color: #667eea;
+		box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 	}
 
 	input:disabled,
 	textarea:disabled {
+		background-color: #f9fafb;
 		opacity: 0.6;
 		cursor: not-allowed;
 	}
@@ -227,34 +258,72 @@
 	small {
 		display: block;
 		margin-top: 0.25rem;
-		color: var(--text-2);
-		font-size: 0.8rem;
+		font-size: 0.875rem;
+		color: #6b7280;
 	}
 
-	button {
+	.submit-btn {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem;
 		width: 100%;
-		padding: 0.875rem;
-		background: var(--accent);
+		padding: 1rem;
+		background: #667eea;
 		color: white;
 		border: none;
 		border-radius: 0.5rem;
 		font-size: 1rem;
-		font-weight: 600;
+		font-weight: 500;
 		cursor: pointer;
-		transition: background-color 0.2s ease;
+		transition: background-color 0.2s;
+		margin-top: 1rem;
 	}
 
-	button:hover:not(:disabled) {
-		background: var(--accent-hover);
+	.submit-btn:hover:not(:disabled) {
+		background: #5a67d8;
 	}
 
-	button:disabled {
+	.submit-btn:disabled {
 		opacity: 0.6;
 		cursor: not-allowed;
 	}
 
-	textarea {
-		resize: vertical;
-		min-height: 100px;
+	.loading-spinner {
+		width: 20px;
+		height: 20px;
+		border: 2px solid #ffffff33;
+		border-top: 2px solid white;
+		border-radius: 50%;
+		animation: spin 1s linear infinite;
+	}
+
+	@keyframes spin {
+		0% {
+			transform: rotate(0deg);
+		}
+		100% {
+			transform: rotate(360deg);
+		}
+	}
+
+	.error-message {
+		background: #fef2f2;
+		color: #dc2626;
+		padding: 1rem;
+		border-radius: 0.5rem;
+		margin-bottom: 1rem;
+		font-size: 0.9rem;
+		border: 1px solid #fecaca;
+	}
+
+	.success-message {
+		background: #f0fdf4;
+		color: #166534;
+		padding: 1rem;
+		border-radius: 0.5rem;
+		margin-bottom: 1rem;
+		font-size: 0.9rem;
+		border: 1px solid #bbf7d0;
 	}
 </style>

@@ -36,7 +36,8 @@ class AuthStore {
 				this.loading = false;
 
 				if (event === 'SIGNED_IN') {
-					goto('/profile');
+					// Don't redirect immediately - let the layout handle the flow
+					// The socket connection will determine if user needs setup or can go to home
 				} else if (event === 'SIGNED_OUT') {
 					goto('/login');
 				}
@@ -52,7 +53,7 @@ class AuthStore {
 			const { error } = await supabase.auth.signInWithOAuth({
 				provider: 'github',
 				options: {
-					redirectTo: `${window.location.origin}/profile`
+					redirectTo: `${window.location.origin}/`
 				}
 			});
 			if (error) {

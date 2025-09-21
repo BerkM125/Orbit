@@ -4,8 +4,6 @@
  * @returns {Promise<Array>} Array of transformed user profile objects
  */
 async function getAllUserProfiles(supabase) {
-	console.log('Fetching all user profiles...');
-
 	// Default values for required fields
 	const DEFAULT_HEADSHOT =
 		'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y.jpg';
@@ -24,8 +22,6 @@ async function getAllUserProfiles(supabase) {
 		console.error('Error fetching user profiles:', error.message);
 		return [];
 	}
-
-	console.log('Successfully fetched user profiles');
 
 	// Transform Supabase user profiles to match demoRoom users structure
 	const transformedUsers = data.map((profile) => ({
@@ -63,13 +59,10 @@ async function getAllUserProfiles(supabase) {
  * @param {Array} users - Array of user objects from demoRoom
  */
 async function syncRoomDataToSupabase(supabase, users) {
-	console.log('Syncing room data to Supabase...');
-
 	// Process each user in parallel
 	const updatePromises = users.map(async (user) => {
 		// Skip users without a valid id (temporary socket-only users)
 		if (!user.id) {
-			console.log('Skipping user without id:', `${user.first_name} ${user.last_name}`.trim());
 			return;
 		}
 
@@ -87,12 +80,6 @@ async function syncRoomDataToSupabase(supabase, users) {
 
 		// Validate headshot URL
 		const validatedHeadshot = validateHeadshotUrl(user.profileInfo?.headshot);
-		if (user.profileInfo?.headshot && !validatedHeadshot) {
-			console.warn(
-				`Invalid headshot URL format for user ${user.first_name} ${user.last_name}:`,
-				user.profileInfo.headshot
-			);
-		}
 
 		// Default LinkedIn URL with timestamp to ensure uniqueness
 		const DEFAULT_LINKEDIN = `https://linkedin.com/in/user-${Date.now()}`;
@@ -124,14 +111,11 @@ async function syncRoomDataToSupabase(supabase, users) {
 
 		if (error) {
 			console.error(`Error updating user ${user.id}:`, error.message);
-		} else {
-			console.log(`Successfully updated user ${user.id} in Supabase`);
 		}
 	});
 
 	// Wait for all updates to complete
 	await Promise.all(updatePromises);
-	console.log('Finished syncing room data to Supabase');
 }
 
 /**
@@ -156,8 +140,6 @@ function validateHeadshotUrl(url) {
  * @returns {Promise<Object>} The created/updated user profile with UUID
  */
 async function createOrUpdateUserProfile(supabase, userData) {
-	console.log('Creating/updating user profile...');
-
 	// Use provided first_name/last_name with defaults
 	const first_name = userData.first_name || 'Anonymous';
 	const last_name = userData.last_name || 'User';
@@ -172,9 +154,6 @@ async function createOrUpdateUserProfile(supabase, userData) {
 
 	// Validate and prepare the headshot URL
 	const validatedHeadshot = validateHeadshotUrl(userData.headshot_image);
-	if (userData.headshot_image && !validatedHeadshot) {
-		console.warn('Invalid headshot image URL format:', userData.headshot_image);
-	}
 
 	// Default values for required fields
 	const DEFAULT_LINKEDIN = `https://linkedin.com/in/user-${Date.now()}`; // Unique default LinkedIn URL
@@ -228,7 +207,6 @@ async function createOrUpdateUserProfile(supabase, userData) {
 			.single();
 
 		if (linkedInUser) {
-			console.log('Found existing user by LinkedIn URL');
 			existingUser = linkedInUser;
 			// Update the existing user's data
 			const { data, error } = await supabase
@@ -275,7 +253,6 @@ async function createOrUpdateUserProfile(supabase, userData) {
 
 	// If no UUID or update failed, create new user
 	if (!existingUser) {
-		console.log('Creating new user profile in Supabase');
 		const { data, error } = await supabase
 			.from('documents')
 			.insert([supabaseUser])
