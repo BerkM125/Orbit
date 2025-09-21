@@ -23,6 +23,8 @@ var {
 } = require('./local_modules/vectorQuery');
 var { getLangflowResults } = require('./local_modules/langflowIntegration');
 
+// var { findMatchingPhoto } = require('./facial_recognition/facialDetection');
+
 const { getCallSites } = require('util');
 
 const { createClient } = require('@supabase/supabase-js');
@@ -255,6 +257,7 @@ app.get('/search/', (req, res) => {
 // CRITICAL: Listen on the PORT environment variable for Cloud Run
 const port = process.env.PORT || 3000;
 httpServer.listen(port, async () => {
+    //console.log(await findMatchingPhoto("https://cdn.nba.com/headshots/nba/latest/1040x760/203110.png", demoRoom.users));
 	console.log(`Server running on port ${port}`);
 
 	// Get and initialize user profiles from Supabase

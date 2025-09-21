@@ -20,9 +20,12 @@
   "dependencies": {
     "@google-cloud/functions-framework": "^3.3.0",
     "@supabase/supabase-js": "^2.57.4",
+    "@vladmandic/face-api": "^1.7.15",
     "babel-loader": "^10.0.0",
+    "canvas": "^3.2.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
+    "node-fetch": "^3.3.2",
     "rimraf": "^6.0.1",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
