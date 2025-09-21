@@ -106,6 +106,7 @@
 		});
 	}
 
+
 	onMount(async () => {
 		if (!browser) return;
 
@@ -151,35 +152,22 @@
 				console.error('Map error:', e);
 			});
 
-			// Get user's location and fly to it
-			if (navigator.geolocation) {
-				navigator.geolocation.getCurrentPosition(
-					(position) => {
-						const { latitude, longitude } = position.coords;
-						console.log('User location:', latitude, longitude);
-						map.flyTo({
-							center: [longitude, latitude],
-							zoom: 14
-						});
-					},
-					(err) => {
-						console.warn('Geolocation error:', err);
-					}
-				);
-			}
+			// Add geolocation control that shows native blue dot
+			const geolocateControl = new mapboxgl.GeolocateControl({
+				positionOptions: {
+					enableHighAccuracy: true
+				},
+				trackUserLocation: true,
+				showUserHeading: true,
+				showAccuracyCircle: true
+			});
 
-			// Add geolocation control
-			map.addControl(
-				new mapboxgl.GeolocateControl({
-					positionOptions: {
-						enableHighAccuracy: true
-					},
-					trackUserLocation: true,
-					showUserHeading: true,
-					showAccuracyCircle: true
-				}),
-				'top-right'
-			);
+			map.addControl(geolocateControl, 'top-right');
+
+			// Automatically trigger geolocation on page load
+			map.on('load', () => {
+				geolocateControl.trigger();
+			});
 
 			// Add navigation controls
 			map.addControl(new mapboxgl.NavigationControl(), 'top-right');
@@ -368,4 +356,5 @@
 			min-height: 48px; /* Ensures touch target is at least 48px */
 		}
 	}
+
 </style>
