@@ -1,14 +1,14 @@
 <script>
 	import XIcon from '~icons/ph/x';
 	import LinkedInIcon from '~icons/ph/linkedin-logo';
-    import ArrowLeftIcon from '~icons/ph/arrow-left';
+	import ArrowLeftIcon from '~icons/ph/arrow-left';
 
-    let {
-        isOpen = $bindable(false),
-        profile = $bindable(null),
-        showBackButton = false,
-        onBack = () => {}
-    } = $props();
+	let {
+		isOpen = $bindable(false),
+		profile = $bindable(null),
+		showBackButton = false,
+		onBack = () => {}
+	} = $props();
 
 	function closePopup() {
 		isOpen = false;
@@ -79,7 +79,7 @@
 		aria-label="Profile popup"
 	>
 		<div class="popup-container">
-            {#if showBackButton}
+			{#if showBackButton}
 				<button class="back-button" onclick={onBack}>
 					<ArrowLeftIcon />
 				</button>
@@ -190,7 +190,7 @@
 		transition: all 0.2s ease;
 	}
 
-    .back-button {
+	.back-button {
 		position: absolute;
 		top: 1rem;
 		left: 1rem;
@@ -213,13 +213,12 @@
 		font-size: 1.25rem;
 	}
 
-    .back-button :global(svg) {
+	.back-button :global(svg) {
 		font-size: 1.25rem;
 	}
 
 	.profile-content {
 		padding: 1rem;
-        padding-top: 3rem;
 	}
 
 	.profile-header {
