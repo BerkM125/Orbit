@@ -1,5 +1,5 @@
 <script>
-	import { data } from '$lib/data.svelte';
+	import { localData } from '$lib/data.svelte.js';
 </script>
 
 <svelte:head>
