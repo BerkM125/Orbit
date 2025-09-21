@@ -1,7 +1,9 @@
 <script>
-	import { onMount } from 'svelte';
+	import { data } from '$lib/data.svelte';
 </script>
 
 <svelte:head>
 	<title>CascadiaJS</title>
 </svelte:head>
+
+<div class="content"></div>
