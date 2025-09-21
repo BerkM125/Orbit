@@ -5,8 +5,6 @@
  */
 async function getAllUserProfiles(supabase) {
 	// Default values for required fields
-	const DEFAULT_HEADSHOT =
-		'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y.jpg';
 	const DEFAULT_LOCATION = {
 		latitude: 47.6062, // Default to Seattle
 		longitude: -122.3321
@@ -78,9 +76,6 @@ async function syncRoomDataToSupabase(supabase, users) {
 			longitude: -122.3321
 		};
 
-		// Validate headshot URL
-		const validatedHeadshot = validateHeadshotUrl(user.profileInfo?.headshot);
-
 		// Default LinkedIn URL with timestamp to ensure uniqueness
 		const DEFAULT_LINKEDIN = `https://linkedin.com/in/user-${Date.now()}`;
 
@@ -92,7 +87,7 @@ async function syncRoomDataToSupabase(supabase, users) {
 			// LinkedIn URL is required - provide a unique default if none exists
 			linkedin_url: user.profileInfo?.linkedIn || DEFAULT_LINKEDIN,
 			bio: user.profileInfo?.bio || '',
-			headshot_image: validatedHeadshot || DEFAULT_HEADSHOT,
+			headshot_image: user.profileInfo?.headshot,
 			// Get location from user object, handling both possible structures
 			latitude:
 				typeof user.location?.latitude === 'number'
@@ -145,8 +140,6 @@ async function createOrUpdateUserProfile(supabase, userData) {
 	const last_name = userData.last_name || 'User';
 
 	// Default values for required fields
-	const DEFAULT_HEADSHOT =
-		'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y.jpg';
 	const DEFAULT_LOCATION = {
 		latitude: 47.6062, // Default to Seattle
 		longitude: -122.3321
@@ -187,7 +180,7 @@ async function createOrUpdateUserProfile(supabase, userData) {
 		linkedin_url: userData.linkedin_url || DEFAULT_LINKEDIN,
 		bio: userData.bio || '',
 		// Always provide a valid headshot image
-		headshot_image: validatedHeadshot || DEFAULT_HEADSHOT,
+		headshot_image: userData.headshot_image,
 		// Required phone number
 		phone_number: userData.phone_number || DEFAULT_PHONE,
 		// Required location fields
