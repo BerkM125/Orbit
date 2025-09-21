@@ -51,7 +51,7 @@ async function createEmbedding(text) {
 async function insertProfile(profile, embedding) {
   try {
     const { data, error } = await supabase
-      .from('user_profiles')
+      .from('documents')
       .insert({
         first_name: profile.firstName,
         last_name: profile.lastName,
