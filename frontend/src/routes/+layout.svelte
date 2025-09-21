@@ -14,7 +14,6 @@
 		return dict;
 	}
 
-	// Initiate socket connections on mount
 	onMount(() => {
 		console.log('layout onmount');
 		$inspect(localData.user);
@@ -64,5 +63,9 @@
 		justify-content: space-around;
 		padding: 1rem;
 		z-index: 1000;
+	}
+
+	.container {
+		height: 100%;
 	}
 </style>

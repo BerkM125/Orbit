@@ -52,7 +52,7 @@ io.on('connection', (socket) => {
 			// Add the user to the room with their Supabase UUID
 			addUserToRoom(updatedUserData, socket);
 			// Send the updated user data (with UUID) back to the client
-			socket.emit('user-data-updated', updatedUserData);
+			socket.emit('update-data', demoRoom);
 		} catch (error) {
 			console.error('Error processing join request:', error);
 			socket.emit('join-error', { message: 'Failed to process join request' });
