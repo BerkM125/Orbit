@@ -3,18 +3,10 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import { onMount } from 'svelte';
   	import io from 'socket.io-client';
-	
+	// import { localData } from '$lib/data.svelte';
 	let { children } = $props();
-
-	// Client's "full" local database. NOT sent to the server, only received.
-	let localRoomData = $state({
-			id: 'cascadia',
-			name: 'Cascadia Hackathon',
-			users: []
-	});
-
-	// And this is the client's OWN data, that it will SEND to the server.
-	let userData = $state({
+	let dict = $state({});
+	let user = $state({
 		name: "SAMPLE USERNAME",
 		// No userId - will be assigned by Supabase
 		linkedin_url: "https://www.linkedin.com/in/sample-username/",
@@ -25,29 +17,39 @@
 			longitude: -122.3321
 		}
 	});
+	// Turn all loaded users' data to a dictionary for easy retrieval
+	/*
+	{
+		"uuid" : {},
+		"uuid2" : {}
+	}
+	*/
+	function convertDataToDict(data) {
+		data.forEach((user) => {
+			dict[user.userId] = user;
+		});
+	}
 
 	// Initiate socket connections on mount
 	onMount(() => {
 		console.log('Layout mounted.');
+		console.log(user);
 
 		// Link to the Express app server running socketio
 		const socket = io('https://6f3ad484c5c1.ngrok-free.app');
 
 		// Join the server room 
-		function joinRoom(userData) {
-			socket.emit("join-room", userData);
-		}
-		joinRoom(userData);
+		socket.emit("join-room", user);
 
 		// This is how to listen for requests to get this user's location
 		socket.on('get-location', () => {
-			socket.emit('send-location', userData)
+			socket.emit('send-location', user)
 		})
 
 		// This is how to listen for the server sending all user locations
 		socket.on("update-data", (data) => {
-			localRoomData = data;
-			console.log(JSON.stringify(localRoomData));
+			dict = convertDataToDict(data);
+			console.log(JSON.stringify(dict));
 		});
 
 	});
