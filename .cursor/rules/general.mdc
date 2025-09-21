@@ -1,0 +1,64 @@
+---
+description: general project description
+globs: ["**/*"]
+alwaysApply: true
+---
+
+# System Description: Orbit
+
+Orbit is a mobile-first web app for hyperlocal professional networking. The application allows users to discover and connect with others in their immediate vicinity using an interactive, visual interface.
+
+## Core Features
+
+### Main View (Honeycomb Interface)
+
+- **Apple Watch-inspired design**: User's profile picture in the center with nearby people displayed as bubbles in a honeycomb pattern around them
+- **Interactive navigation**: Draggable interface to explore and view more people in the vicinity
+- **Profile discovery**: Click on any person's bubble to reveal their detailed profile with name, picture, LinkedIn, and other professional information
+- **Search functionality**: Text input bar at the top for filtering people based on queries (e.g., "find developers" or "find people who work at Google")
+
+### Map View
+
+- **Geographic visualization**: People displayed as dots on an interactive map
+- **Location-based discovery**: Same search and filtering capabilities as the main view
+- **Spatial awareness**: Visual representation of proximity of professionals in the vicinity
+
+### User Profile Management
+
+- **Profile display**: Comprehensive view of user's own profile information
+- **Profile editing**: Input fields and controls to update personal and professional details
+
+### Authentication
+
+- **Single sign-in/sign-up page**: Streamlined onboarding experience
+- **GitHub OAuth**: Primary authentication method for user registration and login
+
+## Technical Architecture & Project Structure
+
+### Frontend (`/frontend/`)
+
+- **Framework**: SvelteKit with Svelte 5 (with runes syntax)
+- **Structure**:
+  - `src/routes/`: SvelteKit pages and layouts
+    - `+page.svelte`: Main honeycomb interface
+    - `map/+page.svelte`: Map view with geographic visualization
+    - `profile/+page.svelte`: User profile management
+    - `signup/+page.svelte`: Authentication page
+  - `src/lib/`: Shared components and utilities
+  - `docs/`: Svelte 5 documentation and best practices
+  - `static/`: Static assets
+
+### Backend (`/backend/`)
+
+- **Runtime**: Node.js
+- **Database**: Supabase integration with structured user profiles
+- **Structure**:
+  - `src/`: Main backend application
+    - `index.js`: Main server entry point
+    - `local_modules/`: Custom modules for location services, room data, and Supabase integration
+  - `db/`: Database schemas and sample data
+    - User profile schemas and sample data
+    - Database configuration and utilities
+  - `scripts/`: Utility scripts for data management
+    - Supabase integration and schema updates
+    - Data vectorization and sample data management
