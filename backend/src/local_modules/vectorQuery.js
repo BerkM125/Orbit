@@ -1,6 +1,18 @@
+const { demoRoom } = require("./roomData");
+
 const MY_SUPABASE_URL = 'https://uwfnpwmchtnssaejiqep.supabase.co';
 const MY_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV3Zm5wd21jaHRuc3NhZWppcWVwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc2MTU1ODUsImV4cCI6MjA3MzE5MTU4NX0.3Gc3tlFT3FS7K0QAK_Z03RLkteilqj6Mpu9l3Q2vJ4k';
 const MY_OPENAI_KEY = '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';
+
+function keywordSearch(query) {
+	const keywords = query.toLowerCase().split(/\s+/);
+    console.log(demoRoom.users);
+	return demoRoom.users.filter(user => {
+		const bio = user.profileInfo.bio.toLowerCase();
+		// Return true if any keyword is found in the bio
+		return keywords.some(keyword => bio.includes(keyword));
+	});
+}
 
 async function vectorSearch(nlpSearch) {
     supabaseUrl = MY_SUPABASE_URL;
@@ -87,5 +99,6 @@ async function generateVectorForQuery(query, openAiKey) {
 module.exports = {
     search,
     generateVectorForQuery,
-    vectorSearch
+    vectorSearch,
+    keywordSearch
 };
