@@ -15,6 +15,11 @@
 	let selectedProfile = $state(null);
 	let showProfilePopup = $state(false);
 
+	// Scaling state
+	let userElements = $state([]);
+	let windowHeight = $state(0);
+	let windowWidth = $state(0);
+
 	// Touch event handlers
 	function handleTouchStart(event) {
 		isDragging = true;
@@ -81,6 +86,41 @@
 	function closeProfilePopup() {
 		showProfilePopup = false;
 		selectedProfile = null;
+	}
+
+	// Scaling function based on distance from center
+	function updateScaling() {
+		if (!userElements.length || !windowHeight || !windowWidth) return;
+
+		const centerX = windowWidth / 2;
+		const centerY = windowHeight / 2;
+
+		userElements.forEach((element, index) => {
+			if (!element) return;
+
+			const rect = element.getBoundingClientRect();
+			const elementCenterX = rect.left + rect.width / 2;
+			const elementCenterY = rect.top + rect.height / 2;
+
+			// Calculate distance from center (0 to 1, where 1 is at center)
+			const distanceY = Math.abs(elementCenterY - centerY) / windowHeight;
+			const distanceX = Math.abs(elementCenterX - centerX) / windowWidth;
+
+			// Combine both distances and invert (closer to center = higher scale)
+			const scaleY = 1 - distanceY;
+			const scaleX = 1 - distanceX;
+			const scale = Math.max(0, (scaleY + scaleX) / 2);
+
+			// Apply minimum scale and smooth the effect
+			const finalScale = Math.max(0.3, scale);
+
+			// Check if this is the current user and apply additional scaling
+			const isCurrentUser = element.classList.contains('current-user');
+			const currentUserScale = isCurrentUser ? 1.2 : 1;
+			const totalScale = finalScale * currentUserScale;
+
+			element.style.transform = `translateX(calc(var(--stagger) * 6rem)) scale(${totalScale})`;
+		});
 	}
 	// let sortedUsersTest = [
 	// 	{
@@ -202,7 +242,34 @@
 	$inspect(sortedUsers);
 	$inspect(layoutData);
 
+	// Effect to reset userElements when layout data changes
+	$effect(() => {
+		userElements = [];
+	});
+
+	// Effect to continuously update scaling
+	$effect(() => {
+		if (userElements.length > 0) {
+			const updateLoop = () => {
+				updateScaling();
+				requestAnimationFrame(updateLoop);
+			};
+			updateLoop();
+		}
+	});
+
 	onMount(() => {
+		// Initialize window dimensions
+		windowHeight = window.innerHeight;
+		windowWidth = window.innerWidth;
+
+		// Update dimensions on resize
+		const handleResize = () => {
+			windowHeight = window.innerHeight;
+			windowWidth = window.innerWidth;
+		};
+
+		window.addEventListener('resize', handleResize);
 		// Add global mouse event listeners for desktop dragging
 		document.addEventListener('mousemove', handleMouseMove);
 		document.addEventListener('mouseup', handleMouseUp);
@@ -217,6 +284,7 @@
 		return () => {
 			document.removeEventListener('mousemove', handleMouseMove);
 			document.removeEventListener('mouseup', handleMouseUp);
+			window.removeEventListener('resize', handleResize);
 
 			if (contentElement) {
 				contentElement.removeEventListener('touchstart', handleTouchStart);
@@ -239,8 +307,9 @@
 		style="--grid-rows: {layoutData.gridDimensions.rows}; --grid-cols: {layoutData
 			.gridDimensions.cols}; transform: translate({gridPosition.x}px, {gridPosition.y}px);"
 	>
-		{#each layoutData.users as user}
+		{#each layoutData.users as user, index}
 			<button
+				bind:this={userElements[index]}
 				class="user"
 				class:current-user={user.isCurrentUser}
 				style="--grid-row: {user.gridPosition.row + 1}; --grid-col: {user.gridPosition.col +
@@ -301,10 +370,10 @@
 		pointer-events: auto;
 		border: none;
 		padding: 0;
+		transition: transform 0.1s ease-out;
 	}
 	.user.current-user {
 		background: var(--bg-3);
-		transform: translateX(calc(var(--stagger) * 6rem)) scale(1.2);
 		/* border: 2px solid var(--purple-2); */
 		box-shadow: 0 0 25px var(--purple-glow);
 	}

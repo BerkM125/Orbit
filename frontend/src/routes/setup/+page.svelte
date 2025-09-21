@@ -54,7 +54,7 @@
 
 			// Notify the server that profile setup is complete
 			try {
-				const socket = io('https://99f4f29b3cc8.ngrok-free.app');
+				const socket = io('https://localhost:3000');
 				const location = await getCurrentLocation();
 
 				socket.emit('profile-setup-complete', {
