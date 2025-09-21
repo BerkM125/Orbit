@@ -23,10 +23,36 @@
 		}
 	}
 
-	let allPeople = [
-		new People(1, -122.33976551825317, 47.6343886664409, 'Ben', 'UW SWE'),
-		new People(2, -122.30495300951455, 47.653137379218705, 'Yifan', 'UW SWE')
-	];
+	let allPeople = [];
+
+	// Fetch people data from backend
+	async function fetchPeopleData() {
+		try {
+			const response = await fetch('https://6f3ad484c5c1.ngrok-free.app/room');
+			const data = await response.json();
+			
+			// Create People objects from Supabase data
+			const people = data.users.map((user, index) => {
+				return new People(
+					user.userId, // Use userId as id
+					user.location.longitude,
+					user.location.latitude,
+					user.name,
+					user.profileInfo.bio || 'Professional'
+				);
+			});
+			
+			allPeople = people;
+			console.log('Loaded people from backend:', allPeople);
+		} catch (error) {
+			console.error('Error fetching people data:', error);
+			// Fallback to hardcoded data if backend fails
+			allPeople = [
+				new People(1, -122.33976551825317, 47.6343886664409, 'Ben', 'UW SWE'),
+				new People(2, -122.30495300951455, 47.653137379218705, 'Yifan', 'UW SWE')
+			];
+		}
+	}
 
 	function createMarker(person, color = 'var(--acc-1)') {
 		if (!map || !mapboxgl) {
@@ -82,6 +108,9 @@
 		if (!browser) return;
 
 		try {
+			// Fetch people data first
+			await fetchPeopleData();
+
 			// Dynamic import for client-side only
 			const mapboxModule = await import('mapbox-gl');
 			mapboxgl = mapboxModule.default; // Assign to component scope variable

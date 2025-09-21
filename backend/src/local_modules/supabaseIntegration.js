@@ -14,7 +14,7 @@ async function getAllUserProfiles(supabase) {
   };
 
   const { data, error } = await supabase
-    .from('user_profiles')
+    .from('documents')
     .select('id, first_name, last_name, linkedin_url, bio, headshot_image, created_at, updated_at');
 
   if (error) {
@@ -50,7 +50,7 @@ async function getAllUserProfiles(supabase) {
 
 /**
  * Syncs the current demoRoom user data back to Supabase.
- * Updates user_profiles table with latest user information.
+ * Updates documents table with latest user information.
  * @param {SupabaseClient} supabase - The Supabase client instance
  * @param {Array} users - Array of user objects from demoRoom
  */
@@ -101,7 +101,7 @@ async function syncRoomDataToSupabase(supabase, users) {
 
     // Update the user profile in Supabase
     const { error } = await supabase
-      .from('user_profiles')
+      .from('documents')
       .update(userData)
       .eq('id', user.userId);
 
@@ -181,7 +181,7 @@ async function createOrUpdateUserProfile(supabase, userData) {
   // First try to find user by LinkedIn URL if provided
   if (userData.linkedin_url) {
     const { data: linkedInUser } = await supabase
-      .from('user_profiles')
+      .from('documents')
       .select()
       .ilike('linkedin_url', userData.linkedin_url)
       .single();
@@ -191,7 +191,7 @@ async function createOrUpdateUserProfile(supabase, userData) {
       existingUser = linkedInUser;
       // Update the existing user's data
       const { data, error } = await supabase
-        .from('user_profiles')
+        .from('documents')
         .update(supabaseUser)
         .eq('id', linkedInUser.id)
         .select()
@@ -218,7 +218,7 @@ async function createOrUpdateUserProfile(supabase, userData) {
   if (!existingUser && userData.userId && 
       userData.userId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i)) {
     const { data, error } = await supabase
-      .from('user_profiles')
+      .from('documents')
       .update(supabaseUser)
       .eq('id', userData.userId)
       .select()
@@ -233,7 +233,7 @@ async function createOrUpdateUserProfile(supabase, userData) {
   if (!existingUser) {
     console.log("Creating new user profile in Supabase");
     const { data, error } = await supabase
-      .from('user_profiles')
+      .from('documents')
       .insert([supabaseUser])
       .select()
       .single();

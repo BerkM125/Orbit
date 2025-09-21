@@ -51,7 +51,7 @@ async function updateUserProfiles() {
     
     // Get all existing profiles
     const { data: profiles, error: fetchError } = await supabase
-      .from('user_profiles')
+      .from('documents')
       .select('id, first_name, last_name');
     
     if (fetchError) {
@@ -68,7 +68,7 @@ async function updateUserProfiles() {
       const location = seattleCoordinates[i % seattleCoordinates.length];
       
       const { error: updateError } = await supabase
-        .from('user_profiles')
+        .from('documents')
         .update({
           company: company,
           latitude: location.lat,
@@ -87,7 +87,7 @@ async function updateUserProfiles() {
     
     // Verify the updates
     const { data: updatedProfiles, error: verifyError } = await supabase
-      .from('user_profiles')
+      .from('documents')
       .select('first_name, last_name, company, latitude, longitude')
       .limit(5);
     
