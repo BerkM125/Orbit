@@ -8,9 +8,9 @@
 	let mapMarkers = {};
 	let pageLoaded = false;
 	let mapboxgl;
-	let searchValue = '';
-	let showSearchResults = false;
-	let searchResults = [];
+	let searchValue = $state('');
+	let showSearchResults = $state(false);
+	let searchResults = $state([]);
 
 	// Helper function to get coordinates from a person object
 	function getCoords(person) {
@@ -163,11 +163,12 @@
 			map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
 			// Upon clicking the magnifying glass, search for the people!
-			document
-				.getElementsByClassName('chatbot-input-icon')[0]
-				.addEventListener('click', async () => {
+			const searchIcon = document.getElementById('searchSVG');
+			if (searchIcon) {
+				searchIcon.addEventListener('click', async () => {
 					await searchForPeople(searchValue);
 				});
+			}
 		} catch (err) {
 			console.error('Map initialization error:', err);
 		}
@@ -195,7 +196,7 @@
 		console.log('Searching for:', searchParams);
 		try {
 			const backendUrl =
-				import.meta.env.VITE_BACKEND_URL || 'https://694e3406fe15.ngrok-free.app ';
+				import.meta.env.VITE_BACKEND_URL || 'https://694e3406fe15.ngrok-free.app';
 			const response = await fetch(
 				`${backendUrl}/search-langflow/${encodeURIComponent(searchParams)}`
 			);
@@ -243,11 +244,24 @@
 	</div>
 
 	{#if showSearchResults}
-		<div class="modal-backdrop" on:click={closeSearchResults}>
-			<div class="search-results-modal" on:click|stopPropagation>
+		<div
+			class="modal-backdrop"
+			onclick={closeSearchResults}
+			role="button"
+			tabindex="0"
+			onkeydown={(e) => e.key === 'Escape' && closeSearchResults()}
+		>
+			<div
+				class="search-results-modal"
+				onclick={(e) => e.stopPropagation()}
+				onkeydown={(e) => e.key === 'Escape' && closeSearchResults()}
+				role="dialog"
+				aria-modal="true"
+				tabindex="0"
+			>
 				<div class="modal-header">
 					<h2>Search Results</h2>
-					<button class="close-button" on:click={closeSearchResults}>×</button>
+					<button class="close-button" onclick={closeSearchResults}>×</button>
 				</div>
 				<div class="results-container">
 					{#if !searchResults || searchResults.length === 0}
@@ -284,7 +298,6 @@
 </div>
 
 <style>
-	/* === LAYOUT === */
 	.container {
 		position: relative;
 		width: 100%;
@@ -297,45 +310,70 @@
 		height: 100vh;
 	}
 
-	.search-container {
-		position: absolute;
-		top: 20px;
-		left: 20px;
-		right: 20px;
+	.chatbot-input-container {
+		position: fixed;
+		bottom: 20px;
+		left: 50%;
+		transform: translateX(-50%);
 		z-index: 100;
+		width: 100%;
+		max-width: 500px;
+		padding: 0 20px;
+		pointer-events: none;
+	}
+
+	.chatbot-input {
+		display: flex;
+		align-items: center;
+		background: var(--bg-2);
+		border: 1px solid var(--bg-3);
+		border-radius: 4px;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+		padding: 0.75rem 1rem;
+		width: 100%;
+		pointer-events: auto;
+		transition: all 0.2s ease;
+	}
+
+	.chatbot-input:hover {
+		background: var(--bg-3);
+		box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+		transform: translateY(-1px);
+	}
+
+	.chatbot-input:focus-within {
+		border-color: var(--acc-1);
+		box-shadow:
+			0 6px 16px rgba(0, 0, 0, 0.4),
+			0 0 0 2px rgba(var(--acc-1), 0.2);
+		transform: translateY(-1px);
+	}
+
+	.chatbot-input-icon {
+		width: 20px;
+		height: 20px;
+		color: var(--txt-2);
+		margin-right: 0.75rem;
+		flex-shrink: 0;
+		cursor: pointer;
+		transition: color 0.2s ease;
+	}
+
+	.chatbot-input-icon:hover {
+		color: var(--txt-0);
 	}
 
 	.search-input {
-		width: 100%;
-		padding: 0.75rem 1rem;
-		border: 1px solid var(--bg-3);
-		border-radius: 4px;
-		background: var(--bg-2);
-		color: var(--txt-1);
-		font-size: 16px;
+		flex: 1;
+		border: none;
 		outline: none;
-		transition: border-color 0.2s ease;
+		font-size: 16px;
+		background: transparent;
+		color: var(--txt-1);
 	}
 
 	.search-input::placeholder {
 		color: var(--txt-3);
-	}
-
-	.search-input:focus {
-		border-color: var(--acc-1);
-	}
-
-	@media (max-width: 768px) {
-		.search-container {
-			top: 16px;
-			left: 16px;
-			right: 16px;
-		}
-
-		.search-input {
-			padding: 0.5rem 0.75rem;
-			font-size: 16px; /* Prevents zoom on iOS */
-		}
 	}
 
 	/* Mapbox marker styles */
