@@ -1,8 +1,10 @@
 ---
-description: Always refer to the Svelte 5/SvelteKit documentation when making edits in the frontend folder
+description: Frontend rules
 globs: ["frontend/**/*"]
 alwaysApply: true
 ---
+
+## Svelte
 
 **IMPORTANT: This project uses Svelte 5 with runes syntax. Always use runes ($state, $derived, $effect, etc.) instead of the legacy reactive statements (like `let count = 0` with `$:` statements) and stores.**
 
@@ -16,3 +18,11 @@ When making any edits to files in the /frontend folder, always refer to the /fro
 - Build and deployment considerations
 
 This documentation contains the most up-to-date information for Svelte 5 and SvelteKit development. Always consult it before implementing features or making changes.
+
+## CSS
+
+When making any CSS edits to files in the /frontend folder, follow these guidelines:
+
+- Write minimal CSS to achieve the desired effect
+- Use existing general selectors/styles from the global app.css whenever possible
+- Use existing CSS variables from the global app.css whenever possible

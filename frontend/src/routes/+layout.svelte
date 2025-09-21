@@ -4,6 +4,10 @@
 	import { onMount } from 'svelte';
 
 	let { children } = $props();
+
+	onMount(() => {
+		console.log('layout mounted');
+	});
 </script>
 
 <svelte:head>
