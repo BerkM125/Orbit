@@ -207,7 +207,7 @@
 		console.log('Searching for:', searchParams);
 		try {
 			const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
-			const response = await fetch(`${backendUrl}/search?searchQuery=${encodeURIComponent(searchParams)}`);
+			const response = await fetch(`${backendUrl}/search-langflow/${encodeURIComponent(searchParams)}`);
 			const results = await response.json();
 			searchResults = results;
 			showSearchResults = true;

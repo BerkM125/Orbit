@@ -32,7 +32,7 @@ async function getLangflowResults(searchQuery) {
 
         // Then replace single quotes with double quotes for valid JSON parsing
         let cleanedMessage = rawMessage.replace(/'/g, '"');
-        return JSON.parse(cleanedMessage).result.room.users;
+        return JSON.parse(cleanedMessage).result;
 
     } catch (error) {
         console.error('Error fetching data:', error);

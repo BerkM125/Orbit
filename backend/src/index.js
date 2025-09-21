@@ -239,12 +239,17 @@ app.get('/room', (req, res) => {
 	res.json(demoRoom);
 });
 
-// Search route
-app.get('/search/', async (req, res) => {
+// Langflow-powered search route, used for the map
+app.get('/search-langflow/:searchQuery', async (req, res) => {
+    const { searchQuery } = req.params;
+    res.json(await getLangflowResults(searchQuery));
+});
+
+// Pure search route, used after RAG optimization
+app.get('/search/', (req, res) => {
     const { searchQuery } = req.query;
     console.log('Search query received:', searchQuery);
     res.json(keywordSearch(searchQuery));
-    //res.json(await getLangflowResults(searchQuery));
 });
 
 // CRITICAL: Listen on the PORT environment variable for Cloud Run
