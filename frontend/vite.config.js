@@ -9,5 +9,8 @@ export default defineConfig({
 			compiler: 'svelte',
 			defaultClass: 'icon'
 		})
-	]
+	],
+	server: {
+		host: true
+	}
 });
