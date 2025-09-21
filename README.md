@@ -4,11 +4,10 @@
 
 Networking shouldn't be guesswork. Get the right people into your Orbit.
 
-## 🚀 Live Demo
 
 **CHECK IT OUT AT [https://orbit-mauve-psi.vercel.app/map](https://orbit-mauve-psi.vercel.app/map)**
 
-## 🛠️ Tech Stack
+## built with: 
 
 - **Frontend**: SvelteKit + Vite
 - **Backend**: Node.js + Socket.io
