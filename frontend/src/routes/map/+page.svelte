@@ -204,7 +204,7 @@
 		console.log('Searching for:', searchParams);
 		try {
 			const backendUrl =
-				import.meta.env.VITE_BACKEND_URL || 'https://99f4f29b3cc8.ngrok-free.app';
+				import.meta.env.VITE_BACKEND_URL || 'https://694e3406fe15.ngrok-free.app';
 			const response = await fetch(
 				`${backendUrl}/search-langflow/${encodeURIComponent(searchParams)}`
 			);
@@ -223,37 +223,6 @@
 	function closeProfilePopup() {
 		showProfilePopup = false;
 		selectedProfile = null;
-	}
-
-	// Function to send wave message
-	async function sendWaveMessage(recipientPhone) {
-		try {
-			const backendUrl = import.meta.env.VITE_BACKEND_URL || 'https://99f4f29b3cc8.ngrok-free.app';
-			const response = await fetch(`${backendUrl}/send-wave`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					from: '+2315599669',
-					to: recipientPhone,
-					message: "Hey, let's connect!",
-					auth: {
-						accountSid: 'SK9d052fc640cbd5fc9ac40a7f93583db4',
-						authToken: 'jNm5jMoVjKviPknmmLdxnrN15tStQPyS'
-					}
-				})
-			});
-			
-			if (!response.ok) {
-				throw new Error('Failed to send wave');
-			}
-			
-			alert('Wave sent successfully! 👋');
-		} catch (error) {
-			console.error('Error sending wave:', error);
-			alert('Failed to send wave message');
-		}
 	}
 </script>
 
@@ -331,12 +300,6 @@
 											LinkedIn Profile
 										</a>
 									{/if}
-									<button 
-										class="wave-button" 
-										onclick={() => sendWaveMessage(result.phone)}
-									>
-										👋 Wave
-									</button>
 								</div>
 							</div>
 						{/each}
@@ -570,24 +533,5 @@
 		text-align: center;
 		color: var(--txt-2);
 		padding: 2rem;
-	}
-
-	.wave-button {
-		background: var(--acc-1);
-		border: none;
-		border-radius: 4px;
-		padding: 0.5rem 1rem;
-		color: var(--txt-0);
-		cursor: pointer;
-		margin-top: 0.5rem;
-		transition: transform 0.2s ease;
-	}
-
-	.wave-button:hover {
-		transform: scale(1.05);
-	}
-
-	.wave-button:active {
-		transform: scale(0.95);
 	}
 </style>
