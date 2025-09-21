@@ -12,3 +12,6 @@
 <main>
 	{@render children?.()}
 </main>
+
+<style>
+</style>
