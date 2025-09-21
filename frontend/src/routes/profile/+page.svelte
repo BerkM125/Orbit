@@ -59,7 +59,7 @@
 		<div class="profile-card">
 			<div class="profile-avatar">
 				<img
-					src={userProfile.headshot ||
+					src={userProfile.headshot_image ||
 						'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y.jpg'}
 					alt="Profile"
 				/>
