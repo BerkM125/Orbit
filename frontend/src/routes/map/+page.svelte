@@ -312,7 +312,7 @@
 
 	.chatbot-input-container {
 		position: fixed;
-		bottom: 20px;
+		top: 1rem;
 		left: 50%;
 		transform: translateX(-50%);
 		z-index: 100;
