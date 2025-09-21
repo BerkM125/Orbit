@@ -24,6 +24,7 @@ async function getLangflowResults(searchQuery) {
         }
 
         const data = await response.json(); // Wait for the response body to be parsed as JSON
+        console.log("RAW DATA: ", data.outputs[0].outputs[0].artifacts.message);
         let rawMessage = data.outputs[0].outputs[0].artifacts.message;
         
         // First replace double quotes with the number 6 to avoid conflicts

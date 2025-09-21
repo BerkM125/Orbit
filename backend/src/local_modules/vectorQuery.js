@@ -7,6 +7,7 @@ async function vectorSearch(nlpSearch) {
     supabaseKey = MY_SUPABASE_KEY;
     openAiKey = MY_OPENAI_KEY;
     var embeddingResult = await generateVectorForQuery(nlpSearch, openAiKey);
+    console.log('Generated embedding:', embeddingResult);
     var searchResults = await search(supabaseUrl, supabaseKey, embeddingResult);
     return searchResults;
 }
@@ -26,7 +27,7 @@ async function search(supabaseUrl, supabaseKey, queryEmbedding) {
     params: {
       query_embedding: queryEmbedding,
       match_threshold: 0.78,
-      match_count: 10,
+      match_count: 5,
     },
   };
 
@@ -43,6 +44,7 @@ async function search(supabaseUrl, supabaseKey, queryEmbedding) {
     }
 
     const data = await response.json();
+    console.log("RAW DATA: ", data);
     return data;
   } catch (error) {
     console.error('An error occurred during the search:', error);

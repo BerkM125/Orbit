@@ -28,7 +28,7 @@
 	// Fetch people data from backend
 	async function fetchPeopleData() {
 		try {
-			const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
+			const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
 			const response = await fetch(`${backendUrl}/room`);
 			const data = await response.json();
 
