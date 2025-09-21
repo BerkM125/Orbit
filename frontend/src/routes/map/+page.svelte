@@ -117,7 +117,7 @@
 
 			map = new mapboxgl.Map({
 				container: mapContainer,
-				style: 'mapbox://styles/mapbox/streets-v12',
+				style: 'mapbox://styles/mapbox/dark-v11',
 				center: [-122.308954, 47.608027],
 				zoom: 12
 			});
@@ -152,7 +152,7 @@
 				showAccuracyCircle: true
 			});
 
-			map.addControl(geolocateControl, 'top-right');
+			map.addControl(geolocateControl, 'bottom-right');
 
 			// Automatically trigger geolocation on page load
 			map.on('load', () => {
@@ -160,7 +160,7 @@
 			});
 
 			// Add navigation controls
-			map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+			map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
 
 			// Upon clicking the magnifying glass, search for the people!
 			const searchIcon = document.getElementById('searchSVG');
@@ -217,8 +217,8 @@
 	<link href="https://api.mapbox.com/mapbox-gl-js/v3.1.0/mapbox-gl.css" rel="stylesheet" />
 </svelte:head>
 
-<div class="container">
-	<div class="map" bind:this={mapContainer}></div>
+<div class="content">
+	<div id="map" bind:this={mapContainer}></div>
 
 	<!-- Chatbot Bar -->
 	<div class="chatbot-input-container">
@@ -298,13 +298,13 @@
 </div>
 
 <style>
-	.container {
+	.content {
 		position: relative;
 		width: 100%;
 		height: 100%;
 	}
 
-	.map {
+	#map {
 		position: absolute;
 		width: 100vw;
 		height: 100vh;
