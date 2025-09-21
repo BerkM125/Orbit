@@ -130,9 +130,7 @@
 			// Get the stagger value from the CSS custom property
 			const computedStyle = getComputedStyle(element);
 			const stagger = computedStyle.getPropertyValue('--stagger') || '0';
-			const circleSize = computedStyle.getPropertyValue('--user-circle-size') || '5rem';
-			const circleSizeValue = parseFloat(circleSize); // Get the numeric value
-			const staggerValue = parseFloat(stagger) * circleSizeValue; // Use the circle size for stagger calculation
+			const staggerValue = parseFloat(stagger) * 7; // Use the circle size for stagger calculation
 
 			element.style.transform = `translateX(${staggerValue}rem) scale(${totalScale})`;
 		});
@@ -356,10 +354,9 @@
 	}
 
 	.hexagonal-grid {
-		--user-circle-size: 6rem;
 		display: grid;
-		grid-template-rows: repeat(var(--grid-rows), var(--user-circle-size));
-		grid-template-columns: repeat(var(--grid-cols), var(--user-circle-size));
+		grid-template-rows: repeat(var(--grid-rows), 6rem);
+		grid-template-columns: repeat(var(--grid-cols), 6rem);
 		gap: 0.15rem 1rem;
 		position: relative;
 		pointer-events: none;
@@ -368,8 +365,8 @@
 	.user {
 		grid-row: var(--grid-row);
 		grid-column: var(--grid-col);
-		width: var(--user-circle-size);
-		height: var(--user-circle-size);
+		width: 6rem;
+		height: 6rem;
 		border-radius: 50%;
 		display: flex;
 		align-items: center;
@@ -377,7 +374,7 @@
 		background: var(--bg-2);
 		cursor: pointer;
 		position: relative;
-		transform: translateX(calc(var(--stagger) * (var(--user-circle-size) + 1rem)));
+		transform: translateX(0);
 		pointer-events: auto;
 		border: none;
 		padding: 0;
