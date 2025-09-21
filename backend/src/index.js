@@ -79,7 +79,7 @@ io.on('connection', (socket) => {
 // Express routes
 app.get('/', (req, res) => {
 	res.json({
-		message: 'BubbleUp Backend is running!',
+		message: 'backend is running!',
 		room: demoRoom
 	});
 });

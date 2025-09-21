@@ -31,8 +31,9 @@ async function getAllUserProfiles(supabase) {
 	const transformedUsers = data.map((profile) => ({
 		// Use the Supabase UUID as userId
 		userId: profile.id,
-		// Combine first and last name
-		name: `${profile.first_name} ${profile.last_name}`.trim(),
+		// Use separate name fields
+		first_name: profile.first_name,
+		last_name: profile.last_name,
 		// Include additional profile info with defaults
 		profileInfo: {
 			linkedIn: profile.linkedin_url || `https://linkedin.com/in/user-${profile.id}`,
@@ -43,8 +44,12 @@ async function getAllUserProfiles(supabase) {
 		},
 		// Use actual location data from Supabase, only fall back to defaults if necessary
 		location: {
-			latitude: typeof profile.latitude === 'number' ? profile.latitude : DEFAULT_LOCATION.latitude,
-			longitude: typeof profile.longitude === 'number' ? profile.longitude : DEFAULT_LOCATION.longitude
+			latitude:
+				typeof profile.latitude === 'number' ? profile.latitude : DEFAULT_LOCATION.latitude,
+			longitude:
+				typeof profile.longitude === 'number'
+					? profile.longitude
+					: DEFAULT_LOCATION.longitude
 		}
 	}));
 
@@ -64,14 +69,16 @@ async function syncRoomDataToSupabase(supabase, users) {
 	const updatePromises = users.map(async (user) => {
 		// Skip users without a valid userId (temporary socket-only users)
 		if (!user.userId) {
-			console.log('Skipping user without userId:', user.name);
+			console.log(
+				'Skipping user without userId:',
+				`${user.first_name} ${user.last_name}`.trim()
+			);
 			return;
 		}
 
-		// Split the combined name back into first and last
-		const nameParts = user.name.split(' ');
-		const first_name = nameParts[0];
-		const last_name = nameParts.slice(1).join(' ');
+		// Use the user's separate name fields
+		const first_name = user.first_name || 'Anonymous';
+		const last_name = user.last_name || 'User';
 
 		// Default values for required fields
 		const DEFAULT_HEADSHOT =
@@ -85,7 +92,7 @@ async function syncRoomDataToSupabase(supabase, users) {
 		const validatedHeadshot = validateHeadshotUrl(user.profileInfo?.headshot);
 		if (user.profileInfo?.headshot && !validatedHeadshot) {
 			console.warn(
-				`Invalid headshot URL format for user ${user.name}:`,
+				`Invalid headshot URL format for user ${user.first_name} ${user.last_name}:`,
 				user.profileInfo.headshot
 			);
 		}
@@ -102,9 +109,15 @@ async function syncRoomDataToSupabase(supabase, users) {
 			linkedin_url: user.profileInfo?.linkedIn || DEFAULT_LINKEDIN,
 			bio: user.profileInfo?.bio || '',
 			headshot_image: validatedHeadshot || DEFAULT_HEADSHOT,
-            // Get location from user object, handling both possible structures
-            latitude: typeof user.location?.latitude === 'number' ? user.location.latitude : DEFAULT_LOCATION.latitude,
-            longitude: typeof user.location?.longitude === 'number' ? user.location.longitude : DEFAULT_LOCATION.longitude,
+			// Get location from user object, handling both possible structures
+			latitude:
+				typeof user.location?.latitude === 'number'
+					? user.location.latitude
+					: DEFAULT_LOCATION.latitude,
+			longitude:
+				typeof user.location?.longitude === 'number'
+					? user.location.longitude
+					: DEFAULT_LOCATION.longitude,
 			// Always update the timestamp
 			updated_at: new Date().toISOString()
 		};
@@ -148,10 +161,9 @@ function validateHeadshotUrl(url) {
 async function createOrUpdateUserProfile(supabase, userData) {
 	console.log('Creating/updating user profile...');
 
-	// Split the name if it exists
-	const nameParts = (userData.name || 'Anonymous User').split(' ');
-	const first_name = nameParts[0];
-	const last_name = nameParts.slice(1).join(' ');
+	// Use provided first_name/last_name with defaults
+	const first_name = userData.first_name || 'Anonymous';
+	const last_name = userData.last_name || 'User';
 
 	// Default values for required fields
 	const DEFAULT_HEADSHOT =
@@ -172,18 +184,28 @@ async function createOrUpdateUserProfile(supabase, userData) {
 
 	// Get location from userData, ensuring we handle both possible structures
 	const location = userData.location || {};
-	const latitude = typeof location.latitude === 'number' ? location.latitude :
-					(typeof userData.latitude === 'number' ? userData.latitude : DEFAULT_LOCATION.latitude);
-	const longitude = typeof location.longitude === 'number' ? location.longitude :
-					(typeof userData.longitude === 'number' ? userData.longitude : DEFAULT_LOCATION.longitude);
+	const latitude =
+		typeof location.latitude === 'number'
+			? location.latitude
+			: typeof userData.latitude === 'number'
+			? userData.latitude
+			: DEFAULT_LOCATION.latitude;
+	const longitude =
+		typeof location.longitude === 'number'
+			? location.longitude
+			: typeof userData.longitude === 'number'
+			? userData.longitude
+			: DEFAULT_LOCATION.longitude;
 
 	// Generate a unique phone number if none provided
-	const DEFAULT_PHONE = `+1206${Math.floor(Math.random() * 10000000).toString().padStart(7, '0')}`;
+	const DEFAULT_PHONE = `+1206${Math.floor(Math.random() * 10000000)
+		.toString()
+		.padStart(7, '0')}`;
 
 	// Prepare the user data in Supabase format
 	const supabaseUser = {
 		first_name,
-		last_name,
+		last_name: last_name || 'User', // Fallback to 'User' if last_name is empty
 		// LinkedIn URL is required - provide a unique default if none exists
 		linkedin_url: userData.linkedin_url || DEFAULT_LINKEDIN,
 		bio: userData.bio || '',

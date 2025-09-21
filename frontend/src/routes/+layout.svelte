@@ -36,9 +36,12 @@
 		socket = io('http://localhost:3000');
 
 		// Join the server room with authenticated user data
+		const fullName = authStore.user.user_metadata?.full_name || authStore.user.email;
+		const nameParts = fullName.split(' ');
 		const userData = {
 			userId: authStore.user.id,
-			name: authStore.user.user_metadata?.full_name || authStore.user.email,
+			first_name: nameParts[0],
+			last_name: nameParts.slice(1).join(' ') || 'User',
 			email: authStore.user.email,
 			avatar_url: authStore.user.user_metadata?.avatar_url,
 			location: {

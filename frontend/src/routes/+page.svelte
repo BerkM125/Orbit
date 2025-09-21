@@ -5,8 +5,6 @@
 
 	$inspect(localData.dict);
 
-	let sortedUsers = $derived(sortUsersByDistance(localData.dict, localData.user));
-
 	// Touch/drag state
 	let isDragging = $state(false);
 	let dragStart = $state({ x: 0, y: 0 });
@@ -69,121 +67,122 @@
 		isDragging = false;
 		event.preventDefault();
 	}
-	let sortedUsersTest = [
-		{
-			id: 'user-1',
-			distance: 1
-		},
-		{
-			id: 'user-2',
-			distance: 2
-		},
-		{
-			id: 'user-3',
-			distance: 3
-		},
-		{
-			id: 'user-4',
-			distance: 4
-		},
-		{
-			id: 'user-5',
-			distance: 5
-		},
-		{
-			id: 'user-6',
-			distance: 6
-		},
-		{
-			id: 'user-7',
-			distance: 7
-		},
-		{
-			id: 'user-8',
-			distance: 8
-		},
-		{
-			id: 'user-9',
-			distance: 9
-		},
-		{
-			id: 'user-10',
-			distance: 10
-		},
-		{
-			id: 'user-11',
-			distance: 11
-		},
-		{
-			id: 'user-12',
-			distance: 12
-		},
-		{
-			id: 'user-13',
-			distance: 13
-		},
-		{
-			id: 'user-14',
-			distance: 14
-		},
-		{
-			id: 'user-15',
-			distance: 15
-		},
-		{
-			id: 'user-16',
-			distance: 16
-		},
-		{
-			id: 'user-17',
-			distance: 17
-		},
-		{
-			id: 'user-18',
-			distance: 18
-		},
-		{
-			id: 'user-19',
-			distance: 19
-		},
-		{
-			id: 'user-20',
-			distance: 20
-		},
-		{
-			id: 'user-21',
-			distance: 21
-		},
-		{
-			id: 'user-22',
-			distance: 22
-		},
-		{
-			id: 'user-23',
-			distance: 23
-		},
-		{
-			id: 'user-24',
-			distance: 24
-		},
-		{
-			id: 'user-25',
-			distance: 25
-		},
-		{
-			id: 'user-26',
-			distance: 26
-		},
-		{
-			id: 'user-27',
-			distance: 27
-		},
-		{
-			id: 'user-28',
-			distance: 28
-		}
-	];
-	let layoutData = $derived(getHexagonalLayoutData(sortedUsersTest, localData.user));
+	// let sortedUsersTest = [
+	// 	{
+	// 		id: 'user-1',
+	// 		distance: 1
+	// 	},
+	// 	{
+	// 		id: 'user-2',
+	// 		distance: 2
+	// 	},
+	// 	{
+	// 		id: 'user-3',
+	// 		distance: 3
+	// 	},
+	// 	{
+	// 		id: 'user-4',
+	// 		distance: 4
+	// 	},
+	// 	{
+	// 		id: 'user-5',
+	// 		distance: 5
+	// 	},
+	// 	{
+	// 		id: 'user-6',
+	// 		distance: 6
+	// 	},
+	// 	{
+	// 		id: 'user-7',
+	// 		distance: 7
+	// 	},
+	// 	{
+	// 		id: 'user-8',
+	// 		distance: 8
+	// 	},
+	// 	{
+	// 		id: 'user-9',
+	// 		distance: 9
+	// 	},
+	// 	{
+	// 		id: 'user-10',
+	// 		distance: 10
+	// 	},
+	// 	{
+	// 		id: 'user-11',
+	// 		distance: 11
+	// 	},
+	// 	{
+	// 		id: 'user-12',
+	// 		distance: 12
+	// 	},
+	// 	{
+	// 		id: 'user-13',
+	// 		distance: 13
+	// 	},
+	// 	{
+	// 		id: 'user-14',
+	// 		distance: 14
+	// 	},
+	// 	{
+	// 		id: 'user-15',
+	// 		distance: 15
+	// 	},
+	// 	{
+	// 		id: 'user-16',
+	// 		distance: 16
+	// 	},
+	// 	{
+	// 		id: 'user-17',
+	// 		distance: 17
+	// 	},
+	// 	{
+	// 		id: 'user-18',
+	// 		distance: 18
+	// 	},
+	// 	{
+	// 		id: 'user-19',
+	// 		distance: 19
+	// 	},
+	// 	{
+	// 		id: 'user-20',
+	// 		distance: 20
+	// 	},
+	// 	{
+	// 		id: 'user-21',
+	// 		distance: 21
+	// 	},
+	// 	{
+	// 		id: 'user-22',
+	// 		distance: 22
+	// 	},
+	// 	{
+	// 		id: 'user-23',
+	// 		distance: 23
+	// 	},
+	// 	{
+	// 		id: 'user-24',
+	// 		distance: 24
+	// 	},
+	// 	{
+	// 		id: 'user-25',
+	// 		distance: 25
+	// 	},
+	// 	{
+	// 		id: 'user-26',
+	// 		distance: 26
+	// 	},
+	// 	{
+	// 		id: 'user-27',
+	// 		distance: 27
+	// 	},
+	// 	{
+	// 		id: 'user-28',
+	// 		distance: 28
+	// 	}
+	// ];
+	let sortedUsers = $derived(sortUsersByDistance(localData.dict, localData.user));
+	let layoutData = $derived(getHexagonalLayoutData(sortedUsers, localData.user));
 
 	$inspect(sortedUsers);
 	$inspect(layoutData);

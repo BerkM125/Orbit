@@ -1,7 +1,8 @@
 class LocalData {
 	dict = $state({});
 	user = $state({
-		name: 'SAMPLE USERNAME',
+		first_name: 'SAMPLE',
+		last_name: 'USERNAME',
 		userId: 'sample-username',
 		linkedin_url: 'https://www.linkedin.com/in/sample-username/',
 		bio: 'SDE @ Hewlett Packard Enterprise',
@@ -12,6 +13,11 @@ class LocalData {
 			longitude: -122.3321
 		}
 	});
+	
+	// Helper method to get full name
+	getFullName() {
+		return `${this.user.first_name} ${this.user.last_name}`.trim();
+	}
 }
 
 export const localData = new LocalData();

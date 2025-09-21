@@ -1,5 +1,19 @@
 <script>
     import { authStore } from '$lib/stores/auth.svelte.js';
+    
+    // Create a reactive derived value for the user's name parts
+    let firstName = $derived(() => {
+        if (!authStore.user) return '';
+        const fullName = authStore.user.user_metadata?.full_name || authStore.user.email;
+        return fullName.split(' ')[0];
+    });
+    
+    let lastName = $derived(() => {
+        if (!authStore.user) return '';
+        const fullName = authStore.user.user_metadata?.full_name || authStore.user.email;
+        const nameParts = fullName.split(' ');
+        return nameParts.slice(1).join(' ') || 'User';
+    });
 </script>
 
 <div class="profile-container">
@@ -7,8 +21,10 @@
 
     {#if authStore.user}
         <div class="user-info">
-            <h2>Welcome, {authStore.user.user_metadata?.full_name || authStore.user.email}</h2>
+            <h2>Welcome, {firstName} {lastName}</h2>
             <p>Email: {authStore.user.email}</p>
+            <p>First Name: {firstName}</p>
+            <p>Last Name: {lastName}</p>
         </div>
     {/if}
 
