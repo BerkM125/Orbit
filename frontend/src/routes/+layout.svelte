@@ -22,7 +22,7 @@
 	// Turn all loaded users' data to a dictionary for easy retrieval
 	function convertDataToDict(data) {
 		let dict = {};
-		data.users.forEach((user) => {
+		data.forEach((user) => {
 			if (user && user.id) {
 				dict[user.id] = user;
 			}
@@ -55,15 +55,16 @@
 			// Listen for existing user data update
 			socket.on('update-data', (data) => {
 				console.log('Received update-data - existing user');
-				localData.dict = convertDataToDict(data);
+				localData.dict = convertDataToDict(data.users);
+				localData.user = localData.dict[authStore.user.id] || {};
 				loading = false; // User exists, data loaded, stop loading
 			});
 
 			// Listen for new user requiring profile setup
 			socket.on('profile-setup-required', (data) => {
 				console.log('Received profile-setup-required - new user needs setup');
-				loading = false; // Stop loading
 				goto('/setup'); // Redirect to setup for profile creation
+				loading = false; // Stop loading
 			});
 
 			// Listen for requests to get this user's location

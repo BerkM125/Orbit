@@ -234,11 +234,8 @@
 				data-position={user.positionInRing}
 			>
 				<img
-					src={user.isCurrentUser
-						? user.headshot_image
-						: user.profileInfo?.headshot ||
-							user.headshotImage ||
-							'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y.jpg'}
+					src={user.profileInfo?.headshot ||
+						'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y.jpg'}
 					alt="{user.first_name} {user.last_name}"
 					class="profile-image"
 				/>
@@ -304,11 +301,5 @@
 		border-radius: 50%;
 		object-fit: cover;
 		object-position: center;
-		border: 2px solid var(--bg-1);
-		transition: all 0.2s ease;
-	}
-
-	.user:hover .profile-image {
-		border-color: var(--accent);
 	}
 </style>
