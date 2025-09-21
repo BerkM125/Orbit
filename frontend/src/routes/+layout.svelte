@@ -35,7 +35,7 @@
         if (!authStore.isAuthenticated || socket) return;
 
         // Link to the Express app server running socketio
-        socket = io('http://localhost:3001');
+        socket = io('http://localhost:3000');
 
         // Join the server room with authenticated user data
         const userData = {

@@ -15,6 +15,13 @@ var {
 	syncRoomDataToSupabase,
 	createOrUpdateUserProfile
 } = require('./local_modules/supabaseIntegration');
+var {
+    search,
+    generateVectorForQuery,
+    vectorSearch
+} = require('./local_modules/vectorQuery');
+var { getLangflowResults } = require('./local_modules/langflowIntegration');
+
 const { getCallSites } = require('util');
 
 const { createClient } = require('@supabase/supabase-js');
@@ -88,6 +95,14 @@ app.get('/', (req, res) => {
 app.get('/room', (req, res) => {
 	res.json(demoRoom);
 });
+
+// Search route
+app.get('/search/:searchQuery', async (req, res) => {
+    const { searchQuery } = req.params;
+    console.log('Search query received:', searchQuery);
+    res.json(await getLangflowResults(searchQuery));
+});
+
 
 // CRITICAL: Listen on the PORT environment variable for Cloud Run
 const port = process.env.PORT || 3000;

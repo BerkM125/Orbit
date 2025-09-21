@@ -42,7 +42,7 @@
 					user.profileInfo.bio || 'Professional'
 				);
 			});
-			
+
 			allPeople = people;
 			console.log('Loaded people from backend:', allPeople);
 		} catch (error) {
@@ -182,6 +182,21 @@
 
 			// Add navigation controls
 			map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+			// Function to search for people using langflow powered search
+			async function searchForPeople(searchParams) {
+				console.log('Searching for:', searchParams);
+				// await an http request to https://6f3ad484c5c1.ngrok-free.app/search/[searchParams]
+				const response = await fetch(`https://6f3ad484c5c1.ngrok-free.app/search/${encodeURIComponent(searchParams)}`);
+				const results = await response.json();
+				alert("RESULTS IN CONSOLE!");
+				console.log("RESULTS: ", results);
+			}
+
+			// Upon clicking the magnifying glass, search for the people!
+			document.getElementsByClassName("chatbot-input-icon")[0].addEventListener("click", async () => {
+				await searchForPeople(searchValue);
+			});
 		} catch (err) {
 			console.error('Map initialization error:', err);
 		}
@@ -219,6 +234,7 @@
 		<div class="chatbot-input">
 			<svg
 				class="chatbot-input-icon icon"
+				id="searchSVG"
 				viewBox="0 0 24 24"
 				fill="none"
 				stroke="currentColor"
@@ -229,7 +245,7 @@
 			</svg>
 			<input
 				type="text"
-				placeholder="Chatbot input placeholder"
+				placeholder="Search for people..."
 				bind:value={searchValue}
 				class="search-input"
 			/>
@@ -253,7 +269,7 @@
 
 	.chatbot-input-container {
 		position: fixed;
-		bottom: 20px;
+		top: 20px;
 		left: 50%;
 		transform: translateX(-50%);
 		z-index: 100;
@@ -316,14 +332,12 @@
 		color: var(--txt-3);
 	}
 
-	@media (max-width: 768px) {
+		@media (max-width: 768px) {
 		.chatbot-input-container {
-			bottom: 16px;
+			top: 16px;
 			padding: 0 16px;
 			max-width: calc(100vw - 32px);
-		}
-
-		.chatbot-input {
+		}		.chatbot-input {
 			padding: 0.5rem 0.75rem;
 		}
 
