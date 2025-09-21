@@ -17,7 +17,7 @@ async function getAllUserProfiles(supabase) {
 	const { data, error } = await supabase
 		.from('documents')
 		.select(
-			'id, first_name, last_name, linkedin_url, bio, headshot_image, created_at, updated_at'
+			'id, first_name, last_name, linkedin_url, bio, headshot_image, created_at, updated_at, latitude, longitude'
 		);
 
 	if (error) {
@@ -41,10 +41,10 @@ async function getAllUserProfiles(supabase) {
 			joinedAt: profile.created_at,
 			lastActive: profile.updated_at
 		},
-		// Add location with defaults
+		// Use actual location data from Supabase, only fall back to defaults if necessary
 		location: {
-			latitude: DEFAULT_LOCATION.latitude,
-			longitude: DEFAULT_LOCATION.longitude
+			latitude: typeof profile.latitude === 'number' ? profile.latitude : DEFAULT_LOCATION.latitude,
+			longitude: typeof profile.longitude === 'number' ? profile.longitude : DEFAULT_LOCATION.longitude
 		}
 	}));
 
@@ -102,6 +102,9 @@ async function syncRoomDataToSupabase(supabase, users) {
 			linkedin_url: user.profileInfo?.linkedIn || DEFAULT_LINKEDIN,
 			bio: user.profileInfo?.bio || '',
 			headshot_image: validatedHeadshot || DEFAULT_HEADSHOT,
+            // Get location from user object, handling both possible structures
+            latitude: typeof user.location?.latitude === 'number' ? user.location.latitude : DEFAULT_LOCATION.latitude,
+            longitude: typeof user.location?.longitude === 'number' ? user.location.longitude : DEFAULT_LOCATION.longitude,
 			// Always update the timestamp
 			updated_at: new Date().toISOString()
 		};
@@ -167,6 +170,16 @@ async function createOrUpdateUserProfile(supabase, userData) {
 	// Default values for required fields
 	const DEFAULT_LINKEDIN = `https://linkedin.com/in/user-${Date.now()}`; // Unique default LinkedIn URL
 
+	// Get location from userData, ensuring we handle both possible structures
+	const location = userData.location || {};
+	const latitude = typeof location.latitude === 'number' ? location.latitude :
+					(typeof userData.latitude === 'number' ? userData.latitude : DEFAULT_LOCATION.latitude);
+	const longitude = typeof location.longitude === 'number' ? location.longitude :
+					(typeof userData.longitude === 'number' ? userData.longitude : DEFAULT_LOCATION.longitude);
+
+	// Generate a unique phone number if none provided
+	const DEFAULT_PHONE = `+1206${Math.floor(Math.random() * 10000000).toString().padStart(7, '0')}`;
+
 	// Prepare the user data in Supabase format
 	const supabaseUser = {
 		first_name,
@@ -176,6 +189,11 @@ async function createOrUpdateUserProfile(supabase, userData) {
 		bio: userData.bio || '',
 		// Always provide a valid headshot image
 		headshot_image: validatedHeadshot || DEFAULT_HEADSHOT,
+		// Required phone number
+		phone_number: userData.phone_number || DEFAULT_PHONE,
+		// Required location fields
+		latitude,
+		longitude,
 		updated_at: new Date().toISOString()
 	};
 
@@ -257,6 +275,10 @@ async function createOrUpdateUserProfile(supabase, userData) {
 	return {
 		...userData,
 		userId: existingUser.id,
+		location: {
+			latitude: existingUser.latitude,
+			longitude: existingUser.longitude
+		},
 		profileInfo: {
 			linkedIn: existingUser.linkedin_url,
 			bio: existingUser.bio,

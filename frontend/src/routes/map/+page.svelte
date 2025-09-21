@@ -42,7 +42,7 @@
 					user.profileInfo.bio || 'Professional'
 				);
 			});
-
+			
 			allPeople = people;
 			console.log('Loaded people from backend:', allPeople);
 		} catch (error) {
