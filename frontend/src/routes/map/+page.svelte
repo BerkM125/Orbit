@@ -163,9 +163,11 @@
 			map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
 			// Upon clicking the magnifying glass, search for the people!
-			document.getElementsByClassName("chatbot-input-icon")[0].addEventListener("click", async () => {
-				await searchForPeople(searchValue);
-			});
+			document
+				.getElementsByClassName('chatbot-input-icon')[0]
+				.addEventListener('click', async () => {
+					await searchForPeople(searchValue);
+				});
 		} catch (err) {
 			console.error('Map initialization error:', err);
 		}
@@ -173,7 +175,7 @@
 
 	// Function to add new people (for future use) - now handled reactively
 	// Note: This would typically be done by updating localData.dict instead
-
+	function addPerson(newPerson) {
 		if (map && pageLoaded && mapboxgl) {
 			createMarker(newPerson);
 		}
@@ -192,8 +194,11 @@
 	async function searchForPeople(searchParams) {
 		console.log('Searching for:', searchParams);
 		try {
-			const backendUrl = import.meta.env.VITE_BACKEND_URL || 'https://694e3406fe15.ngrok-free.app ';
-			const response = await fetch(`${backendUrl}/search-langflow/${encodeURIComponent(searchParams)}`);
+			const backendUrl =
+				import.meta.env.VITE_BACKEND_URL || 'https://694e3406fe15.ngrok-free.app ';
+			const response = await fetch(
+				`${backendUrl}/search-langflow/${encodeURIComponent(searchParams)}`
+			);
 			const results = await response.json();
 			searchResults = results;
 			showSearchResults = true;
