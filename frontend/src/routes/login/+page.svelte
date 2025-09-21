@@ -75,7 +75,7 @@
 	.login-card {
 		background: white;
 		padding: 3rem;
-		border-radius: 1rem;
+		border-radius: 1.5rem;
 		box-shadow:
 			0 20px 25px -5px rgba(0, 0, 0, 0.1),
 			0 10px 10px -5px rgba(0, 0, 0, 0.04);
@@ -107,7 +107,7 @@
 		background: #24292e;
 		color: white;
 		border: none;
-		border-radius: 0.5rem;
+		border-radius: 1.5rem;
 		font-size: 1rem;
 		font-weight: 500;
 		cursor: pointer;
@@ -146,7 +146,7 @@
 		background: #fef2f2;
 		color: #dc2626;
 		padding: 1rem;
-		border-radius: 0.5rem;
+		border-radius: 1.5rem;
 		margin-bottom: 1rem;
 		font-size: 0.9rem;
 	}

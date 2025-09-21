@@ -386,8 +386,8 @@
 		display: flex;
 		align-items: center;
 		background: var(--bg-2);
-		border: 1px solid var(--bg-3);
-		border-radius: 4px;
+		/* border: 1px solid var(--bg-3); */
+		border-radius: 1.5rem;
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 		padding: 0.75rem 1rem;
 		width: 100%;
@@ -489,12 +489,12 @@
 
 	.search-results-modal {
 		background: var(--bg-2);
-		border-radius: 8px;
+		border-radius: 1.5rem;
 		width: 90%;
 		max-width: 600px;
 		max-height: 80vh;
 		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-		border: 1px solid var(--bg-3);
+		/* border: 1px solid var(--bg-3); */
 	}
 
 	.modal-header {
@@ -534,10 +534,10 @@
 		display: flex;
 		gap: 1rem;
 		padding: 1rem;
-		border-radius: 4px;
+		border-radius: 1.5rem;
 		background: var(--bg-1);
 		margin-bottom: 1rem;
-		border: 1px solid var(--bg-3);
+		/* border: 1px solid var(--bg-3); */
 	}
 
 	.result-avatar {
@@ -580,12 +580,14 @@
 		background: var(--acc-1);
 		color: var(--txt-0);
 		border: none;
-		border-radius: 4px;
+		border-radius: 1.5rem;
 		padding: 0.5rem 1rem;
 		font-size: 0.875rem;
 		cursor: pointer;
 		margin-top: 0.75rem;
-		transition: transform 0.2s ease, background 0.2s ease;
+		transition:
+			transform 0.2s ease,
+			background 0.2s ease;
 	}
 
 	.wave-button:hover {

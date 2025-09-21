@@ -195,7 +195,7 @@
 	.setup-card {
 		background: white;
 		padding: 3rem;
-		border-radius: 1rem;
+		border-radius: 1.5rem;
 		box-shadow:
 			0 20px 25px -5px rgba(0, 0, 0, 0.1),
 			0 10px 10px -5px rgba(0, 0, 0, 0.04);
@@ -233,8 +233,8 @@
 	textarea {
 		width: 100%;
 		padding: 0.75rem;
-		border: 1px solid #d1d5db;
-		border-radius: 0.5rem;
+		/* border: 1px solid #d1d5db; */
+		border-radius: 1.5rem;
 		font-size: 1rem;
 		transition:
 			border-color 0.2s,
@@ -272,7 +272,7 @@
 		background: #667eea;
 		color: white;
 		border: none;
-		border-radius: 0.5rem;
+		border-radius: 1.5rem;
 		font-size: 1rem;
 		font-weight: 500;
 		cursor: pointer;
@@ -311,19 +311,19 @@
 		background: #fef2f2;
 		color: #dc2626;
 		padding: 1rem;
-		border-radius: 0.5rem;
+		border-radius: 1.5rem;
 		margin-bottom: 1rem;
 		font-size: 0.9rem;
-		border: 1px solid #fecaca;
+		/* border: 1px solid #fecaca; */
 	}
 
 	.success-message {
 		background: #f0fdf4;
 		color: #166534;
 		padding: 1rem;
-		border-radius: 0.5rem;
+		border-radius: 1.5rem;
 		margin-bottom: 1rem;
 		font-size: 0.9rem;
-		border: 1px solid #bbf7d0;
+		/* border: 1px solid #bbf7d0; */
 	}
 </style>

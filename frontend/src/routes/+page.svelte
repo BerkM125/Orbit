@@ -14,6 +14,7 @@
 	let contentElement;
 	let selectedProfile = $state(null);
 	let showProfilePopup = $state(false);
+	let hasMoved = $state(false);
 
 	// Scaling state
 	let userElements = $state([]);
@@ -22,31 +23,38 @@
 
 	// Touch event handlers
 	function handleTouchStart(event) {
-		isDragging = true;
+		hasMoved = false;
 		const touch = event.touches[0];
 		dragStart = { x: touch.clientX, y: touch.clientY };
 		lastGridPosition = { ...gridPosition };
-		event.preventDefault();
+		// Don't prevent default here to allow click events
 	}
 
 	function handleTouchMove(event) {
-		if (!isDragging) return;
-
 		const touch = event.touches[0];
 		const deltaX = touch.clientX - dragStart.x;
 		const deltaY = touch.clientY - dragStart.y;
 
-		gridPosition = {
-			x: lastGridPosition.x + deltaX,
-			y: lastGridPosition.y + deltaY
-		};
+		// Check if we've moved enough to consider it a drag
+		const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+		if (distance > 10) {
+			// 10px threshold
+			hasMoved = true;
+			isDragging = true;
+		}
 
-		event.preventDefault();
+		if (isDragging) {
+			gridPosition = {
+				x: lastGridPosition.x + deltaX,
+				y: lastGridPosition.y + deltaY
+			};
+			event.preventDefault();
+		}
 	}
 
 	function handleTouchEnd(event) {
 		isDragging = false;
-		event.preventDefault();
+		// Don't prevent default here to allow click events
 	}
 
 	// Mouse event handlers for desktop testing
@@ -77,7 +85,7 @@
 	}
 
 	function handleUserClick(user) {
-		if (!isDragging) {
+		if (!hasMoved) {
 			selectedProfile = user;
 			showProfilePopup = true;
 		}
@@ -111,15 +119,20 @@
 			const scaleX = 1 - distanceX;
 			const scale = Math.max(0, (scaleY + scaleX) / 2);
 
-			// Apply minimum scale and smooth the effect
-			const finalScale = Math.max(0.3, scale);
+			// Apply minimum scale and smooth the effect - make it more pronounced
+			const finalScale = Math.max(0.5, scale); // Increased multiplier and higher minimum
 
 			// Check if this is the current user and apply additional scaling
 			const isCurrentUser = element.classList.contains('current-user');
-			const currentUserScale = isCurrentUser ? 1.2 : 1;
+			const currentUserScale = isCurrentUser ? 1.1 : 1;
 			const totalScale = finalScale * currentUserScale;
 
-			element.style.transform = `translateX(calc(var(--stagger) * 6rem)) scale(${totalScale})`;
+			// Get the stagger value from the CSS custom property
+			const computedStyle = getComputedStyle(element);
+			const stagger = computedStyle.getPropertyValue('--stagger') || '0';
+			const staggerValue = parseFloat(stagger) * 7; // Use the circle size for stagger calculation
+
+			element.style.transform = `translateX(${staggerValue}rem) scale(${totalScale})`;
 		});
 	}
 	// let sortedUsersTest = [
@@ -242,11 +255,6 @@
 	$inspect(sortedUsers);
 	$inspect(layoutData);
 
-	// Effect to reset userElements when layout data changes
-	$effect(() => {
-		userElements = [];
-	});
-
 	// Effect to continuously update scaling
 	$effect(() => {
 		if (userElements.length > 0) {
@@ -347,8 +355,8 @@
 
 	.hexagonal-grid {
 		display: grid;
-		grid-template-rows: repeat(var(--grid-rows), 5rem);
-		grid-template-columns: repeat(var(--grid-cols), 5rem);
+		grid-template-rows: repeat(var(--grid-rows), 6rem);
+		grid-template-columns: repeat(var(--grid-cols), 6rem);
 		gap: 0.15rem 1rem;
 		position: relative;
 		pointer-events: none;
@@ -357,8 +365,8 @@
 	.user {
 		grid-row: var(--grid-row);
 		grid-column: var(--grid-col);
-		width: 5rem;
-		height: 5rem;
+		width: 6rem;
+		height: 6rem;
 		border-radius: 50%;
 		display: flex;
 		align-items: center;
@@ -366,7 +374,7 @@
 		background: var(--bg-2);
 		cursor: pointer;
 		position: relative;
-		transform: translateX(calc(var(--stagger) * 6rem));
+		transform: translateX(0);
 		pointer-events: auto;
 		border: none;
 		padding: 0;
