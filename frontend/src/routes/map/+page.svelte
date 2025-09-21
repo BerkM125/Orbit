@@ -91,6 +91,7 @@
             font-weight: bold;
             color: var(--bg-1);
             font-family: 'DM Mono', monospace;
+            z-index: 10;
         `;
 
 		// Add initials or icon to the marker (optional)
