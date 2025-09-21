@@ -2,6 +2,7 @@
 	import { localData } from '$lib/stores/data.svelte.js';
 	import { onMount } from 'svelte';
 	import { sortUsersByDistance, getHexagonalLayoutData } from '$lib/utils.js';
+	import ProfilePopup from '$lib/ProfilePopup.svelte';
 
 	$inspect(localData.dict);
 
@@ -11,6 +12,8 @@
 	let gridPosition = $state({ x: 0, y: 0 });
 	let lastGridPosition = $state({ x: 0, y: 0 });
 	let contentElement;
+	let selectedProfile = $state(null);
+	let showProfilePopup = $state(false);
 
 	// Touch event handlers
 	function handleTouchStart(event) {
@@ -66,6 +69,18 @@
 	function handleMouseUp(event) {
 		isDragging = false;
 		event.preventDefault();
+	}
+
+	function handleUserClick(user) {
+		if (!isDragging) {
+			selectedProfile = user;
+			showProfilePopup = true;
+		}
+	}
+
+	function closeProfilePopup() {
+		showProfilePopup = false;
+		selectedProfile = null;
 	}
 	// let sortedUsersTest = [
 	// 	{
@@ -225,13 +240,16 @@
 			.gridDimensions.cols}; transform: translate({gridPosition.x}px, {gridPosition.y}px);"
 	>
 		{#each layoutData.users as user}
-			<div
+			<button
 				class="user"
 				class:current-user={user.isCurrentUser}
 				style="--grid-row: {user.gridPosition.row + 1}; --grid-col: {user.gridPosition.col +
 					1}; --stagger: {user.gridPosition.stagger || 0};"
 				data-ring={user.ring}
 				data-position={user.positionInRing}
+				onclick={() => handleUserClick(user)}
+				onkeydown={(e) => e.key === 'Enter' && handleUserClick(user)}
+				tabindex="0"
 			>
 				<img
 					src={user.profileInfo?.headshot ||
@@ -239,10 +257,13 @@
 					alt="{user.first_name} {user.last_name}"
 					class="profile-image"
 				/>
-			</div>
+			</button>
 		{/each}
 	</div>
 </div>
+
+<!-- Profile Popup -->
+<ProfilePopup bind:isOpen={showProfilePopup} bind:profile={selectedProfile} />
 
 <style>
 	.content {
@@ -278,21 +299,14 @@
 		position: relative;
 		transform: translateX(calc(var(--stagger) * 6rem));
 		pointer-events: auto;
+		border: none;
+		padding: 0;
 	}
-
-	.user:hover {
-		transform: translateX(calc(var(--stagger) * 6rem)) scale(1.1);
-		border-color: var(--accent);
-		z-index: 10;
-	}
-
 	.user.current-user {
 		background: var(--bg-3);
 		transform: translateX(calc(var(--stagger) * 6rem)) scale(1.2);
-	}
-
-	.user.current-user:hover {
-		transform: translateX(calc(var(--stagger) * 6rem)) scale(1.3);
+		/* border: 2px solid var(--purple-2); */
+		box-shadow: 0 0 25px var(--purple-glow);
 	}
 
 	.profile-image {

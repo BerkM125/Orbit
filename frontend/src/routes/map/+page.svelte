@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { localData } from '$lib/stores/data.svelte.js';
+	import ProfilePopup from '$lib/ProfilePopup.svelte';
 
 	let map;
 	let mapContainer;
@@ -11,6 +12,8 @@
 	let searchValue = $state('');
 	let showSearchResults = $state(false);
 	let searchResults = $state([]);
+	let selectedProfile = $state(null);
+	let showProfilePopup = $state(false);
 
 	// Helper function to get coordinates from a person object
 	function getCoords(person) {
@@ -76,7 +79,12 @@
 		mapMarkers[person.id] = marker;
 
 		el.addEventListener('click', (e) => {
-			// Handle marker click
+			// Find the full profile data from localData
+			const fullProfile = Object.values(localData.dict).find((user) => user.id === person.id);
+			if (fullProfile) {
+				selectedProfile = fullProfile;
+				showProfilePopup = true;
+			}
 		});
 	}
 
@@ -211,6 +219,11 @@
 	function closeSearchResults() {
 		showSearchResults = false;
 	}
+
+	function closeProfilePopup() {
+		showProfilePopup = false;
+		selectedProfile = null;
+	}
 </script>
 
 <svelte:head>
@@ -295,6 +308,9 @@
 			</div>
 		</div>
 	{/if}
+
+	<!-- Profile Popup -->
+	<ProfilePopup bind:isOpen={showProfilePopup} bind:profile={selectedProfile} />
 </div>
 
 <style>
