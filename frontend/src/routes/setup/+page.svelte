@@ -143,7 +143,6 @@
 					disabled={loading}
 					placeholder="https://example.com/your-photo.jpg"
 				/>
-				<small>Optional: Link to your profile picture</small>
 			</div>
 
 			<div class="form-group">
@@ -155,7 +154,6 @@
 					disabled={loading}
 					placeholder="https://linkedin.com/in/yourprofile"
 				/>
-				<small>Optional: Your LinkedIn profile URL</small>
 			</div>
 
 			<div class="form-group">
@@ -167,7 +165,6 @@
 					placeholder="Tell others about yourself, your work, and interests..."
 					rows="4"
 				></textarea>
-				<small>Optional: Brief description about yourself</small>
 			</div>
 
 			<button type="submit" disabled={loading} class="submit-btn">
@@ -186,17 +183,17 @@
 	.setup-container {
 		display: flex;
 		justify-content: center;
-		align-items: center;
 		min-height: 100vh;
-		padding: 2rem;
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+		padding: 1.5rem;
+		background: var(--bg-1);
 	}
 
 	.setup-card {
-		background: white;
-		padding: 3rem;
+		background: var(--bg-2);
+		padding: 1.5rem;
 		border-radius: 1.5rem;
-		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+		/* border: 1px solid var(--bg-3); */
 		max-width: 500px;
 		width: 100%;
 	}
@@ -204,16 +201,16 @@
 	h1 {
 		font-size: 2rem;
 		font-weight: bold;
-		margin-bottom: 0.5rem;
-		color: #1f2937;
-		text-align: center;
+		margin: 0.5rem 0;
+		color: var(--txt-0);
+		/* text-align: center; */
 	}
 
 	p {
-		color: #6b7280;
+		color: var(--txt-1);
 		margin-bottom: 2rem;
-		line-height: 1.6;
-		text-align: center;
+		line-height: 1.5;
+		/* text-align: center; */
 	}
 
 	.form-group {
@@ -224,14 +221,17 @@
 		display: block;
 		margin-bottom: 0.5rem;
 		font-weight: 500;
-		color: #374151;
+		color: var(--txt-1);
 	}
 
 	input,
 	textarea {
+		font: inherit;
 		width: 100%;
 		padding: 0.75rem;
-		/* border: 1px solid #d1d5db; */
+		background: var(--bg-3);
+		border: none;
+		color: var(--txt-0);
 		border-radius: 1.5rem;
 		font-size: 1rem;
 		transition:
@@ -242,13 +242,11 @@
 	input:focus,
 	textarea:focus {
 		outline: none;
-		border-color: #667eea;
-		box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
 	}
 
 	input:disabled,
 	textarea:disabled {
-		background-color: #f9fafb;
+		background-color: var(--bg-1);
 		opacity: 0.6;
 		cursor: not-allowed;
 	}
@@ -257,7 +255,7 @@
 		display: block;
 		margin-top: 0.25rem;
 		font-size: 0.875rem;
-		color: #6b7280;
+		color: var(--txt-2);
 	}
 
 	.submit-btn {
@@ -267,8 +265,8 @@
 		gap: 0.5rem;
 		width: 100%;
 		padding: 1rem;
-		background: #667eea;
-		color: white;
+		background: var(--purple-1);
+		color: var(--bg-1);
 		border: none;
 		border-radius: 1.5rem;
 		font-size: 1rem;
@@ -279,7 +277,7 @@
 	}
 
 	.submit-btn:hover:not(:disabled) {
-		background: #5a67d8;
+		background: var(--purple-2);
 	}
 
 	.submit-btn:disabled {
@@ -290,8 +288,8 @@
 	.loading-spinner {
 		width: 20px;
 		height: 20px;
-		border: 2px solid #ffffff33;
-		border-top: 2px solid white;
+		border: 2px solid rgba(255, 255, 255, 0.3);
+		border-top: 2px solid var(--bg-1);
 		border-radius: 50%;
 		animation: spin 1s linear infinite;
 	}
@@ -306,22 +304,22 @@
 	}
 
 	.error-message {
-		background: #fef2f2;
-		color: #dc2626;
+		background: var(--bg-3);
+		color: #ff6b6b;
 		padding: 1rem;
 		border-radius: 1.5rem;
 		margin-bottom: 1rem;
 		font-size: 0.9rem;
-		/* border: 1px solid #fecaca; */
+		border: 1px solid rgba(255, 107, 107, 0.3);
 	}
 
 	.success-message {
-		background: #f0fdf4;
-		color: #166534;
+		background: var(--bg-3);
+		color: #51cf66;
 		padding: 1rem;
 		border-radius: 1.5rem;
 		margin-bottom: 1rem;
 		font-size: 0.9rem;
-		/* border: 1px solid #bbf7d0; */
+		border: 1px solid rgba(81, 207, 102, 0.3);
 	}
 </style>

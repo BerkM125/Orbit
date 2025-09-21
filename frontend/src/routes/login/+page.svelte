@@ -55,10 +55,6 @@
 				Continue with GitHub
 			{/if}
 		</button>
-
-		<div class="info-text">
-			<p>By continuing, you agree to our terms of service and privacy policy.</p>
-		</div>
 	</div>
 </div>
 
@@ -68,15 +64,16 @@
 		justify-content: center;
 		align-items: center;
 		min-height: 100vh;
-		padding: 2rem;
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+		padding: 1.5rem;
+		background: var(--bg-1);
 	}
 
 	.login-card {
-		background: white;
-		padding: 3rem;
+		background: var(--bg-2);
+		padding: 1.5rem;
 		border-radius: 1.5rem;
-		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+		/* border: 1px solid var(--bg-3); */
 		max-width: 400px;
 		width: 100%;
 		text-align: center;
@@ -86,11 +83,11 @@
 		font-size: 2rem;
 		font-weight: bold;
 		margin-bottom: 1rem;
-		color: #1f2937;
+		color: var(--txt-0);
 	}
 
 	p {
-		color: #6b7280;
+		color: var(--txt-1);
 		margin-bottom: 2rem;
 		line-height: 1.6;
 	}
@@ -102,19 +99,18 @@
 		gap: 0.5rem;
 		width: 100%;
 		padding: 1rem;
-		background: #24292e;
-		color: white;
+		background: var(--purple-1);
+		color: var(--bg-1);
 		border: none;
 		border-radius: 1.5rem;
 		font-size: 1rem;
 		font-weight: 500;
 		cursor: pointer;
 		transition: background-color 0.2s;
-		margin-bottom: 2rem;
 	}
 
 	.github-login-btn:hover:not(:disabled) {
-		background: #1a1e22;
+		background: var(--purple-2);
 	}
 
 	.github-login-btn:disabled {
@@ -125,8 +121,8 @@
 	.loading-spinner {
 		width: 20px;
 		height: 20px;
-		border: 2px solid #ffffff33;
-		border-top: 2px solid white;
+		border: 2px solid rgba(255, 255, 255, 0.3);
+		border-top: 2px solid var(--bg-1);
 		border-radius: 50%;
 		animation: spin 1s linear infinite;
 	}
@@ -141,17 +137,18 @@
 	}
 
 	.error-message {
-		background: #fef2f2;
-		color: #dc2626;
+		background: var(--bg-3);
+		color: #ff6b6b;
 		padding: 1rem;
 		border-radius: 1.5rem;
 		margin-bottom: 1rem;
 		font-size: 0.9rem;
+		border: 1px solid rgba(255, 107, 107, 0.3);
 	}
 
 	.info-text {
 		font-size: 0.8rem;
-		color: #9ca3af;
+		color: var(--txt-2);
 	}
 
 	.info-text p {

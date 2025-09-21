@@ -310,14 +310,15 @@
 		align-items: center;
 		justify-content: center;
 		padding: 2rem;
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+		background: var(--bg-1);
 	}
 
 	.form-card {
-		background: white;
+		background: var(--bg-2);
 		padding: 2rem;
 		border-radius: 1.5rem;
-		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+		border: 1px solid var(--bg-3);
 		width: 100%;
 		max-width: 600px;
 	}
@@ -325,13 +326,13 @@
 	h1 {
 		text-align: center;
 		margin-bottom: 0.5rem;
-		color: #333;
+		color: var(--txt-0);
 		font-size: 2rem;
 	}
 
 	.subtitle {
 		text-align: center;
-		color: #666;
+		color: var(--txt-1);
 		margin-bottom: 2rem;
 	}
 
@@ -349,14 +350,16 @@
 		display: block;
 		margin-bottom: 0.5rem;
 		font-weight: 500;
-		color: #333;
+		color: var(--txt-1);
 	}
 
 	input,
 	textarea {
 		width: 100%;
 		padding: 0.75rem;
-		border: 2px solid #e1e5e9;
+		background: var(--bg-3);
+		border: 1px solid var(--bg-3);
+		color: var(--txt-0);
 		border-radius: 1.5rem;
 		font-size: 1rem;
 		transition: border-color 0.2s ease;
@@ -366,12 +369,12 @@
 	input:focus,
 	textarea:focus {
 		outline: none;
-		border-color: #667eea;
+		border-color: var(--purple-1);
 	}
 
 	input:disabled,
 	textarea:disabled {
-		background-color: #f5f5f5;
+		background-color: var(--bg-1);
 		cursor: not-allowed;
 	}
 
@@ -386,8 +389,9 @@
 	.file-label {
 		display: inline-block;
 		padding: 0.75rem 1.5rem;
-		background: #f8f9fa;
-		border: 2px dashed #dee2e6;
+		background: var(--bg-3);
+		border: 2px dashed var(--bg-3);
+		color: var(--txt-1);
 		border-radius: 1.5rem;
 		cursor: pointer;
 		transition: all 0.2s ease;
@@ -397,8 +401,8 @@
 	}
 
 	.file-label:hover {
-		background: #e9ecef;
-		border-color: #667eea;
+		background: var(--bg-1);
+		border-color: var(--purple-1);
 	}
 
 	.preview-container {
@@ -412,7 +416,7 @@
 		height: 100px;
 		object-fit: cover;
 		border-radius: 50%;
-		border: 3px solid #667eea;
+		border: 3px solid var(--purple-1);
 	}
 
 	.remove-image {
@@ -435,18 +439,18 @@
 	.submit-btn {
 		width: 100%;
 		padding: 1rem;
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-		color: white;
+		background: var(--purple-1);
+		color: var(--bg-1);
 		border: none;
 		border-radius: 1.5rem;
 		font-size: 1.1rem;
 		font-weight: 600;
 		cursor: pointer;
-		transition: opacity 0.2s ease;
+		transition: background-color 0.2s ease;
 	}
 
 	.submit-btn:hover:not(:disabled) {
-		opacity: 0.9;
+		background: var(--purple-2);
 	}
 
 	.submit-btn:disabled {
@@ -455,16 +459,16 @@
 	}
 
 	.error-message {
-		background: #fee;
-		color: #c33;
+		background: var(--bg-3);
+		color: #ff6b6b;
 		padding: 1rem;
 		border-radius: 1.5rem;
 		margin-bottom: 1rem;
-		border: 1px solid #fcc;
+		border: 1px solid rgba(255, 107, 107, 0.3);
 	}
 
 	small {
-		color: #666;
+		color: var(--txt-2);
 		font-size: 0.875rem;
 	}
 
