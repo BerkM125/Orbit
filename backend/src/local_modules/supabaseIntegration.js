@@ -32,7 +32,7 @@ async function getAllUserProfiles(supabase) {
 		profileInfo: {
 			linkedIn: profile.linkedin_url || `https://linkedin.com/in/user-${profile.id}`,
 			bio: profile.bio || '',
-			headshot: profile.headshot,
+			headshot: profile.headshot_image,
 			joinedAt: profile.created_at,
 			lastActive: profile.updated_at
 		},
