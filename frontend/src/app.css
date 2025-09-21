@@ -1,11 +1,15 @@
 :root {
 	font-family: 'Rethink Sans', sans-serif;
-	--txt-1: hsl(200, 20%, 10%);
-	--txt-2: hsl(200, 18%, 20%);
-	--txt-3: hsl(200, 16%, 30%);
-	--bg-3: hsl(200, 14%, 75%);
-	--bg-2: hsl(200, 12%, 80%);
-	--bg-1: hsl(200, 10%, 85%);
+	--txt-0: hsl(200, 12%, 90%);
+	--txt-1: hsl(200, 10%, 75%);
+	--txt-2: hsl(200, 8%, 50%);
+	--txt-3: hsl(200, 6%, 30%);
+	--bg-3: hsl(200, 8%, 16%);
+	--bg-2: hsl(200, 10%, 11%);
+	--bg-1: hsl(200, 12%, 8%);
+	--purple-1: hsl(280, 70%, 70%);
+	--purple-2: hsl(280, 60%, 60%);
+	--purple-glow: hsl(280, 70%, 70%);
 }
 
 * {
@@ -13,6 +17,7 @@
 }
 
 html {
+	height: 100%;
 }
 
 body {
@@ -33,4 +38,44 @@ a {
 
 .icon {
 	color: inherit;
+}
+
+#map .mapboxgl-ctrl-bottom-right {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 0.5rem;
+	margin-bottom: 6rem;
+	margin-right: 1rem;
+	color: var(--txt-1);
+}
+#map .mapboxgl-ctrl-bottom-right .mapboxgl-ctrl,
+#map .mapboxgl-ctrl-right .mapboxgl-ctrl {
+	margin: 0;
+}
+#map .mapboxgl-ctrl-group button {
+	border-radius: 2rem;
+	background: var(--bg-2);
+	border: none;
+	backdrop-filter: blur(0.75rem);
+	width: 2.5rem;
+	height: 2.5rem;
+}
+#map .mapboxgl-ctrl-icon {
+	filter: invert(1);
+}
+#map .mapboxgl-ctrl-group {
+	background: transparent;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+#map .mapboxgl-ctrl-logo,
+#map .mapboxgl-ctrl-attrib-button,
+#map .mapboxgl-ctrl-attrib {
+	display: none !important;
+}
+#map .mapboxgl-canvas {
+	width: 100vw;
+	height: 100vh;
 }

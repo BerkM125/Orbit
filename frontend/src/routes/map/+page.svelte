@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { localData } from '$lib/stores/data.svelte.js';
+	import ProfilePopup from '$lib/ProfilePopup.svelte';
 
 	let map;
 	let mapContainer;
@@ -11,6 +12,8 @@
 	let searchValue = $state('');
 	let showSearchResults = $state(false);
 	let searchResults = $state([]);
+	let selectedProfile = $state(null);
+	let showProfilePopup = $state(false);
 
 	// Helper function to get coordinates from a person object
 	function getCoords(person) {
@@ -76,7 +79,12 @@
 		mapMarkers[person.id] = marker;
 
 		el.addEventListener('click', (e) => {
-			// Handle marker click
+			// Find the full profile data from localData
+			const fullProfile = Object.values(localData.dict).find((user) => user.id === person.id);
+			if (fullProfile) {
+				selectedProfile = fullProfile;
+				showProfilePopup = true;
+			}
 		});
 	}
 
@@ -117,9 +125,9 @@
 
 			map = new mapboxgl.Map({
 				container: mapContainer,
-				style: 'mapbox://styles/mapbox/streets-v12',
+				style: 'mapbox://styles/mapbox/dark-v11',
 				center: [-122.308954, 47.608027],
-				zoom: 12
+				zoom: 16
 			});
 
 			map.on('load', () => {
@@ -152,7 +160,7 @@
 				showAccuracyCircle: true
 			});
 
-			map.addControl(geolocateControl, 'top-right');
+			map.addControl(geolocateControl, 'bottom-right');
 
 			// Automatically trigger geolocation on page load
 			map.on('load', () => {
@@ -160,7 +168,7 @@
 			});
 
 			// Add navigation controls
-			map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+			map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
 
 			// Upon clicking the magnifying glass, search for the people!
 			const searchIcon = document.getElementById('searchSVG');
@@ -196,7 +204,7 @@
 		console.log('Searching for:', searchParams);
 		try {
 			const backendUrl =
-				import.meta.env.VITE_BACKEND_URL || 'https://694e3406fe15.ngrok-free.app';
+				import.meta.env.VITE_BACKEND_URL || 'https://99f4f29b3cc8.ngrok-free.app';
 			const response = await fetch(
 				`${backendUrl}/search-langflow/${encodeURIComponent(searchParams)}`
 			);
@@ -211,14 +219,19 @@
 	function closeSearchResults() {
 		showSearchResults = false;
 	}
+
+	function closeProfilePopup() {
+		showProfilePopup = false;
+		selectedProfile = null;
+	}
 </script>
 
 <svelte:head>
 	<link href="https://api.mapbox.com/mapbox-gl-js/v3.1.0/mapbox-gl.css" rel="stylesheet" />
 </svelte:head>
 
-<div class="container">
-	<div class="map" bind:this={mapContainer}></div>
+<div class="content">
+	<div id="map" bind:this={mapContainer}></div>
 
 	<!-- Chatbot Bar -->
 	<div class="chatbot-input-container">
@@ -295,16 +308,19 @@
 			</div>
 		</div>
 	{/if}
+
+	<!-- Profile Popup -->
+	<ProfilePopup bind:isOpen={showProfilePopup} bind:profile={selectedProfile} />
 </div>
 
 <style>
-	.container {
+	.content {
 		position: relative;
 		width: 100%;
 		height: 100%;
 	}
 
-	.map {
+	#map {
 		position: absolute;
 		width: 100vw;
 		height: 100vh;
