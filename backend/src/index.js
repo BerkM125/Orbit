@@ -2,7 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
-var { demoRoom, globalUsersProcessed } = require('./local_modules/room_data');
+var { demoRoom, globalUsersProcessed, removeUser, updateUserData } = require('./local_modules/roomData');
+var { processUserLocation, addUserToRoom } = require('./local_modules/locationServices');
+
 // Create Express app
 const app = express();
 app.use(cors());
@@ -18,26 +20,6 @@ const io = new Server(httpServer, {
   },
   transports: ['websocket', 'polling']
 });
- 
-// Remove user function
-function removeUser(socketId) {
-    for(var i = 0; i < demoRoom.users.length; i++) {
-        if(demoRoom.users[i].socketId === socketId) {
-            demoRoom.users.splice(i, 1);
-            break;
-        }
-    }
-}
-
-// Update specific user's data
-function updateUserData(userId, newData) {
-    for(var i = 0; i < demoRoom.users.length; i++) {
-        if(demoRoom.users[i].userId === userId) {
-            demoRoom.users[i] = { ...demoRoom.users[i], ...newData };
-            break;
-        }
-    }
-}
 
 // Socket.IO event handlers
 io.on("connection", (socket) => {
@@ -45,36 +27,18 @@ io.on("connection", (socket) => {
   socket.join(demoRoom.id);
   
   // Join room command
-  socket.on("join-room", (data) => {
-    const { name, userId, location } = data;
-    demoRoom.users.push({
-      name,
-      userId,
-      location,
-      socketId: socket.id
-    });
+  socket.on("join-room", (userData) => {
+    addUserToRoom(userData, socket);
   });
 
   // Client will emit this to send data to the server
   socket.on("send-location", (userData) => {
-    console.log("Received client data: ", userData);
-    globalUsersProcessed++;
-    updateUserData(userData.userId, { location: userData.location });
-
-    // Only if all users have been processed can we log the full data
-    // GET RID OF THE LENGTH-1 FOR PRODUCTION!!
-    if(globalUsersProcessed === demoRoom.users.length-1) {
-        console.log("All users processed: ");
-        console.log(demoRoom.users);
-        globalUsersProcessed = 0;
-    }
+    processUserLocation(userData);
   });
 
   // Handle user disconnects
   socket.on("disconnect", () => {
     console.log("Client disconnected");
-
-    // Remove user by socket id
     removeUser(socket.id);
   });
 
@@ -83,7 +47,7 @@ io.on("connection", (socket) => {
 // Express routes
 app.get('/', (req, res) => {
   res.json({
-    message: 'Socket.IO Chat Server',
+    message: 'BubbleUp Backend is running!',
     room: demoRoom
   });
 });
