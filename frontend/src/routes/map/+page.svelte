@@ -290,6 +290,7 @@
 				placeholder="Search for people..."
 				bind:value={searchValue}
 				class="search-input"
+				onkeydown={(e) => e.key === 'Enter' && searchForPeople(searchValue)}
 			/>
 		</div>
 	</div>
