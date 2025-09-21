@@ -14,7 +14,7 @@
 	let searchResults = $state([]);
 	let selectedProfile = $state(null);
 	let showProfilePopup = $state(false);
-    let cameFromSearch = $state(false);
+	let cameFromSearch = $state(false);
 
 	// Helper function to get coordinates from a person object
 	function getCoords(person) {
@@ -85,7 +85,7 @@
 			if (fullProfile) {
 				selectedProfile = fullProfile;
 				showProfilePopup = true;
-                cameFromSearch = false;
+				cameFromSearch = false;
 			}
 		});
 	}
@@ -225,7 +225,7 @@
 	function closeProfilePopup() {
 		showProfilePopup = false;
 		selectedProfile = null;
-        cameFromSearch = false;
+		cameFromSearch = false;
 	}
 
 	function backToSearch() {
@@ -245,8 +245,16 @@
 				headshot: result.profileInfo?.headshot || result.headshot_image || result.headshot,
 				bio: result.profileInfo?.bio || result.bio || result.description || result.about,
 				company: result.profileInfo?.company || result.company || result.organization,
-				title: result.profileInfo?.title || result.title || result.position || result.job_title,
-				linkedIn: result.profileInfo?.linkedIn || result.linkedin_url || result.linkedin || result.linkedIn
+				title:
+					result.profileInfo?.title ||
+					result.title ||
+					result.position ||
+					result.job_title,
+				linkedIn:
+					result.profileInfo?.linkedIn ||
+					result.linkedin_url ||
+					result.linkedin ||
+					result.linkedIn
 			}
 		};
 		showProfilePopup = true;
@@ -353,20 +361,31 @@
 						{#each searchResults as result}
 							<div class="result-card" onclick={() => openProfileFromSearch(result)}>
 								<img
-									src={result.profileInfo?.headshot || result.headshot_image || result.headshot}
+									src={result.profileInfo?.headshot ||
+										result.headshot_image ||
+										result.headshot}
 									alt={`${result.first_name} ${result.last_name}`}
 									class="result-avatar"
 								/>
 								<div class="result-info">
 									<h3>{result.first_name} {result.last_name}</h3>
-									<p class="bio">{result.profileInfo?.bio || result.bio || result.description || result.about || 'No bio available'}</p>
+									<p class="bio">
+										{result.profileInfo?.bio ||
+											result.bio ||
+											result.description ||
+											result.about ||
+											'No bio available'}
+									</p>
 									{#if result.profileInfo?.linkedIn || result.linkedin_url || result.linkedin || result.linkedIn}
 										<a
-											href={result.profileInfo?.linkedIn || result.linkedin_url || result.linkedin || result.linkedIn}
+											href={result.profileInfo?.linkedIn ||
+												result.linkedin_url ||
+												result.linkedin ||
+												result.linkedIn}
 											target="_blank"
 											rel="noopener noreferrer"
 											class="linkedin-link"
-                                            onclick={(e) => e.stopPropagation()}
+											onclick={(e) => e.stopPropagation()}
 										>
 											LinkedIn Profile
 										</a>
@@ -427,7 +446,7 @@
 		display: flex;
 		align-items: center;
 		background: var(--bg-2);
-		/* border: 1px solid var(--bg-3); */
+		border: 2px solid var(--bg-3);
 		border-radius: 1.5rem;
 		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 		padding: 0.75rem 1rem;
@@ -517,7 +536,7 @@
 		max-width: 600px;
 		max-height: 80vh;
 		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-		/* border: 1px solid var(--bg-3); */
+		border: 2px solid var(--bg-3);
 	}
 
 	.modal-header {
@@ -525,7 +544,7 @@
 		justify-content: space-between;
 		align-items: center;
 		padding: 1rem;
-		border-bottom: 1px solid var(--bg-3);
+		border-bottom: 1px solid var(--bg-1);
 	}
 
 	.modal-header h2 {
@@ -536,11 +555,12 @@
 
 	.close-button {
 		background: none;
-		border: none;
+		border: 2px solid var(--bg-3);
 		font-size: 1.5rem;
 		color: var(--txt-2);
 		cursor: pointer;
 		padding: 0.5rem;
+		border-radius: 0.5rem;
 	}
 
 	.results-container {
@@ -556,15 +576,15 @@
 		border-radius: 1.5rem;
 		background: var(--bg-1);
 		margin-bottom: 1rem;
-        cursor: pointer;
+		cursor: pointer;
 		transition: background 0.2s ease;
-		/* border: 1px solid var(--bg-3); */
+		border: 2px solid var(--bg-2);
 	}
 
-    .result-card:hover {
+	.result-card:hover {
 		background: var(--bg-3);
 	}
-    
+
 	.result-avatar {
 		width: 60px;
 		height: 60px;
@@ -602,7 +622,7 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 0.5rem;
-		background: var(--acc-1);
+		background: var(--purple-1);
 		color: var(--txt-0);
 		border: none;
 		border-radius: 1.5rem;

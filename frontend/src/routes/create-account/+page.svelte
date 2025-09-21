@@ -318,7 +318,7 @@
 		padding: 2rem;
 		border-radius: 1.5rem;
 		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-		border: 1px solid var(--bg-3);
+		border: 2px solid var(--bg-3);
 		width: 100%;
 		max-width: 600px;
 	}
@@ -358,7 +358,7 @@
 		width: 100%;
 		padding: 0.75rem;
 		background: var(--bg-3);
-		border: 1px solid var(--bg-3);
+		border: 2px solid var(--bg-3);
 		color: var(--txt-0);
 		border-radius: 1.5rem;
 		font-size: 1rem;
@@ -464,7 +464,7 @@
 		padding: 1rem;
 		border-radius: 1.5rem;
 		margin-bottom: 1rem;
-		border: 1px solid rgba(255, 107, 107, 0.3);
+		border: 2px solid rgba(255, 107, 107, 0.3);
 	}
 
 	small {

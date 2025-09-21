@@ -16,10 +16,10 @@ var {
 	createOrUpdateUserProfile
 } = require('./local_modules/supabaseIntegration');
 var {
-    search,
-    generateVectorForQuery,
-    vectorSearch,
-    keywordSearch
+	search,
+	generateVectorForQuery,
+	vectorSearch,
+	keywordSearch
 } = require('./local_modules/vectorQuery');
 var { getLangflowResults } = require('./local_modules/langflowIntegration');
 
@@ -243,21 +243,89 @@ app.get('/room', (req, res) => {
 
 // Langflow-powered search route, used for the map
 app.get('/search-langflow/:searchQuery', async (req, res) => {
-    const { searchQuery } = req.params;
-    res.json(await getLangflowResults(searchQuery));
+	const { searchQuery } = req.params;
+	res.json(await getLangflowResults(searchQuery));
 });
 
 // Pure search route, used after RAG optimization
 app.get('/search/', (req, res) => {
-    const { searchQuery } = req.query;
-    console.log('Search query received:', searchQuery);
-    res.json(keywordSearch(searchQuery));
+	const { searchQuery } = req.query;
+	console.log('Search query received:', searchQuery);
+	res.json(keywordSearch(searchQuery));
+});
+
+// Manual refresh endpoint - treats Supabase as source of truth
+app.post('/refresh', async (req, res) => {
+	try {
+		console.log('Manual refresh requested - fetching data from Supabase...');
+
+		// Fetch all user profiles from Supabase
+		const userProfiles = await getAllUserProfiles(supabase);
+
+		// Reinitialize room with fresh Supabase data
+		await initializeRoomUsers(userProfiles);
+
+		// Broadcast updated room data to all connected clients
+		io.emit('update-data', demoRoom);
+
+		console.log(
+			`Manual refresh completed - room updated with ${userProfiles.length} users from Supabase`
+		);
+
+		res.json({
+			success: true,
+			message: `Room refreshed with ${userProfiles.length} users from Supabase`,
+			userCount: userProfiles.length,
+			roomData: demoRoom
+		});
+	} catch (error) {
+		console.error('Error during manual refresh:', error);
+		res.status(500).json({
+			success: false,
+			message: 'Failed to refresh room data from Supabase',
+			error: error.message
+		});
+	}
+});
+
+// GET version of refresh endpoint for easier testing
+app.get('/refresh', async (req, res) => {
+	try {
+		console.log('Manual refresh requested (GET) - fetching data from Supabase...');
+
+		// Fetch all user profiles from Supabase
+		const userProfiles = await getAllUserProfiles(supabase);
+
+		// Reinitialize room with fresh Supabase data
+		await initializeRoomUsers(userProfiles);
+
+		// Broadcast updated room data to all connected clients
+		io.emit('update-data', demoRoom);
+
+		console.log(
+			`Manual refresh completed - room updated with ${userProfiles.length} users from Supabase`
+		);
+
+		res.json({
+			success: true,
+			message: `Room refreshed with ${userProfiles.length} users from Supabase`,
+			userCount: userProfiles.length,
+			roomData: demoRoom
+		});
+	} catch (error) {
+		console.error('Error during manual refresh:', error);
+		res.status(500).json({
+			success: false,
+			message: 'Failed to refresh room data from Supabase',
+			error: error.message
+		});
+	}
 });
 
 // CRITICAL: Listen on the PORT environment variable for Cloud Run
 const port = process.env.PORT || 3000;
 httpServer.listen(port, async () => {
-    //console.log(await findMatchingPhoto("https://cdn.nba.com/headshots/nba/latest/1040x760/203110.png", demoRoom.users));
+	//console.log(await findMatchingPhoto("https://cdn.nba.com/headshots/nba/latest/1040x760/203110.png", demoRoom.users));
 	console.log(`Server running on port ${port}`);
 
 	// Get and initialize user profiles from Supabase

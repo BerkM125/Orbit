@@ -188,6 +188,7 @@
 		background: var(--bg-2);
 		gap: 0.5rem;
 		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+		border: 2px solid var(--bg-3);
 	}
 
 	nav a {

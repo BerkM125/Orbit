@@ -4,6 +4,7 @@
 	--txt-1: hsl(200, 10%, 75%);
 	--txt-2: hsl(200, 8%, 50%);
 	--txt-3: hsl(200, 6%, 30%);
+	--bg-4: hsl(200, 6%, 20%);
 	--bg-3: hsl(200, 8%, 16%);
 	--bg-2: hsl(200, 10%, 11%);
 	--bg-1: hsl(200, 12%, 8%);
@@ -60,7 +61,7 @@ button {
 #map .mapboxgl-ctrl-group button {
 	border-radius: 2rem;
 	background: var(--bg-2);
-	border: none;
+	border: 2px solid var(--bg-3);
 	backdrop-filter: blur(0.75rem);
 	width: 2.5rem;
 	height: 2.5rem;

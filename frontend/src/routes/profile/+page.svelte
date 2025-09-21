@@ -169,7 +169,7 @@
 	.setup-link {
 		background: transparent;
 		color: var(--purple-1);
-		border: 2px solid var(--purple-1);
+		border: 2px solid var(--bg-3);
 	}
 
 	.setup-link:hover {
@@ -188,7 +188,7 @@
 		align-items: center;
 		padding: 3rem;
 		background: var(--bg-2);
-		/* border: 1px solid var(--bg-3); */
+		border: 2px solid var(--bg-3);
 		border-radius: 1.5rem;
 		color: var(--txt-1);
 	}
@@ -214,7 +214,7 @@
 
 	.profile-card {
 		background: var(--bg-2);
-		/* border: 1px solid var(--bg-3); */
+		border: 2px solid var(--bg-3);
 		border-radius: 1.5rem;
 		padding: 2rem;
 	}
@@ -230,7 +230,7 @@
 		height: 120px;
 		border-radius: 50%;
 		object-fit: cover;
-		border: 3px solid var(--bg-3);
+		border: 3px solid var(--bg-1);
 	}
 
 	.profile-info h2 {
@@ -311,7 +311,7 @@
 	}
 
 	.profile-actions {
-		margin-top: 3rem;
+		margin-top: 2rem;
 		display: flex;
 		justify-content: center;
 	}

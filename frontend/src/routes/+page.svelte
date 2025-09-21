@@ -376,13 +376,13 @@
 		position: relative;
 		transform: translateX(0);
 		pointer-events: auto;
-		border: none;
+		border: 2px solid var(--bg-3);
 		padding: 0;
 		transition: transform 0.1s ease-out;
 	}
 	.user.current-user {
 		background: var(--bg-3);
-		/* border: 2px solid var(--purple-2); */
+		border: 2px solid var(--purple-2);
 		box-shadow: 0 0 25px var(--purple-glow);
 	}
 

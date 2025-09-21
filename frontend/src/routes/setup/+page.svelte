@@ -193,7 +193,7 @@
 		padding: 1.5rem;
 		border-radius: 1.5rem;
 		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-		/* border: 1px solid var(--bg-3); */
+		border: 2px solid var(--bg-3);
 		max-width: 500px;
 		width: 100%;
 	}
@@ -310,7 +310,7 @@
 		border-radius: 1.5rem;
 		margin-bottom: 1rem;
 		font-size: 0.9rem;
-		border: 1px solid rgba(255, 107, 107, 0.3);
+		border: 2px solid rgba(255, 107, 107, 0.5);
 	}
 
 	.success-message {
@@ -320,6 +320,6 @@
 		border-radius: 1.5rem;
 		margin-bottom: 1rem;
 		font-size: 0.9rem;
-		border: 1px solid rgba(81, 207, 102, 0.3);
+		border: 2px solid rgba(81, 207, 102, 0.5);
 	}
 </style>
