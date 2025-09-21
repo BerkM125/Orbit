@@ -226,7 +226,7 @@
 		bottom: 20px;
 		left: 50%;
 		transform: translateX(-50%);
-		z-index: 9999;
+		z-index: 100;
 		width: 100%;
 		max-width: calc(100vw - 40px); /* Prevent overflow with 20px margin on each side */
 		padding: 0 20px;

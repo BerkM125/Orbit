@@ -14,3 +14,7 @@ body {
 	display: flex;
 	flex-direction: column;
 }
+
+.content {
+	background: blue;
+}
