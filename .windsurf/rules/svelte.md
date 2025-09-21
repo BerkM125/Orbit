@@ -1,4 +1,8 @@
 ---
+trigger: manual
+---
+
+---
 description: Always refer to the Svelte 5/SvelteKit documentation when making edits in the frontend folder
 globs: ["frontend/**/*"]
 alwaysApply: true
