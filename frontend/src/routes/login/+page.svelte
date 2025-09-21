@@ -26,12 +26,12 @@
 </script>
 
 <svelte:head>
-	<title>Login - [project name]</title>
+	<title>Login - Orbit</title>
 </svelte:head>
 
 <div class="login-container">
 	<div class="login-card">
-		<h1>Welcome to [project name]</h1>
+		<h1>Welcome to Orbit</h1>
 		<p>
 			Connect with professionals in your area through our location-based networking platform.
 		</p>
