@@ -119,7 +119,7 @@
 				container: mapContainer,
 				style: 'mapbox://styles/mapbox/dark-v11',
 				center: [-122.308954, 47.608027],
-				zoom: 12
+				zoom: 16
 			});
 
 			map.on('load', () => {
