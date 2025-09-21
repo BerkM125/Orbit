@@ -1,16 +1,4 @@
 :root {
-	--txt-0: hsl(60, 10%, 90%);
-	--txt-1: hsl(60, 8%, 75%);
-	--txt-2: hsl(60, 6%, 50%);
-	--txt-3: hsl(60, 4%, 30%);
-	--bg-3: hsl(60, 10%, 16%);
-	--bg-2: hsl(60, 10%, 11%);
-	--bg-1: hsl(60, 10%, 6%);
-	--acc-1: hsl(60, 60%, 60%);
-	--acc-2: hsl(60, 60%, 45%);
-	--green: hsl(140, 60%, 60%);
-	--red: hsl(0, 60%, 60%);
-	font-family: 'DM Mono', monospace;
 }
 
 * {
@@ -22,89 +10,7 @@ html {
 
 body {
 	margin: 0;
-	/* background: var(--bg-1); */
-	/* color: var(--txt-1); */
 	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
-}
-
-a {
-	color: inherit;
-	text-decoration: none;
-}
-
-a.button {
-	padding: 0.5rem 0.75rem;
-	background: var(--bg-2);
-	border: 1px solid var(--bg-3);
-
-	&:hover {
-		background: var(--bg-3);
-	}
-}
-
-h1,
-h2,
-h3,
-h4 {
-	color: var(--txt-0);
-	font-weight: 300;
-}
-
-p {
-	line-height: 1.5;
-}
-
-button {
-	font: inherit;
-	border: none;
-	background: var(--bg-2);
-	border: 1px solid var(--bg-3);
-	padding: 0.5rem 0.75rem;
-	cursor: pointer;
-	color: var(--txt-1);
-
-	&:hover {
-		background: var(--bg-3);
-	}
-
-	&.accent {
-		background: var(--acc-1);
-		color: var(--bg-1);
-		border: 1px solid var(--acc-1);
-
-		&:hover {
-			background: var(--acc-2);
-		}
-	}
-
-	&.icon {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: 0.5rem;
-	}
-}
-
-input {
-	font: inherit;
-	border: none;
-	color: inherit;
-	outline: none;
-	background: none;
-	width: 100%;
-}
-input::placeholder {
-	color: var(--txt-3);
-}
-
-.icon {
-	color: inherit;
-}
-
-.content {
-	padding: 2rem;
-	margin: 2rem auto;
-	max-width: 64rem;
 }
