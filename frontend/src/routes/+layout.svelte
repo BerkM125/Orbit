@@ -17,10 +17,15 @@
 	let loading = $state(true);
 
 	// Pages that don't require authentication
-	const publicPages = ['/login', '/setup'];
+	const publicPages = ['/login'];
 
 	// Turn all loaded users' data to a dictionary for easy retrieval
 	function convertDataToDict(data) {
+		if (!data || !Array.isArray(data)) {
+			console.warn('convertDataToDict received invalid data:', data);
+			return {};
+		}
+
 		let dict = {};
 		data.forEach((user) => {
 			if (user && user.id) {
@@ -55,8 +60,13 @@
 			// Listen for existing user data update
 			socket.on('update-data', (data) => {
 				console.log('Received update-data - existing user');
-				localData.dict = convertDataToDict(data.users);
-				localData.user = localData.dict[authStore.user.id] || {};
+				if (data && data.users) {
+					localData.dict = convertDataToDict(data.users);
+					localData.user = localData.dict[authStore.user.id] || {};
+				} else {
+					console.warn('Received update-data but no users array:', data);
+					localData.dict = {};
+				}
 				loading = false; // User exists, data loaded, stop loading
 			});
 
