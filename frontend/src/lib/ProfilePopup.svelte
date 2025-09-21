@@ -1,5 +1,5 @@
 <script>
-	let { isOpen = false, profile = null } = $props();
+	let { isOpen = $bindable(false), profile = $bindable(null) } = $props();
 
 	function closePopup() {
 		isOpen = false;
