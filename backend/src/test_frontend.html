@@ -74,29 +74,44 @@
 				users: [],
 			}
 
-			// And this is the client's OWN data, that it will SEND to the server.
-			let userData = {
-				name: 'Yifan',
-				userId: 'berkanNumeric',
-				location: {
-					latitude: 47.6062,
-					longitude: -122.3321,
-				},
-			}
-
-			// First, join the room with the sample user data
-			socket.emit('join-room', userData)
+        // And this is the client's OWN data, that it will SEND to the server.
+        let userData = {
+            name: "Berkan Mertan",
+            // No userId - will be assigned by Supabase
+            linkedin_url: "https://www.linkedin.com/in/berkan-m/",
+            bio: "SDE Intern @ UW",
+            headshot_image: "https://media.licdn.com/dms/image/D4D03AQHjv1eXHk1m7g/profile-displayphoto-shrink_800_800/0/1678887038471?e=1701302400&v=beta&t=ZKJ3nY3c1kC8qfO2nF9lJd8nG4p6Ykz8b9rY3F4g6Uo",
+            location: {
+                latitude: 47.6062,
+                longitude: -122.3321
+            }
+        };
+        
+        // First, join the room with the sample user data
+        socket.emit("join-room", userData);
 
 			// This is how to listen for server requests for location
 			socket.on('get-location', () => {
 				socket.emit('send-location', userData)
 			})
 
-			// And this is how to listen for server sending location data
-			socket.on('update-data', (data) => {
-				localRoomData = data
-				alert(JSON.stringify(localRoomData))
-			})
+        // And this is how to listen for server sending location data
+        socket.on("update-data", (data) => {
+            localRoomData = data;
+            alert(JSON.stringify(localRoomData));
+        });
+
+        // Listen for user data updates (including UUID assignment)
+        socket.on("user-data-updated", (updatedData) => {
+            userData = { ...userData, ...updatedData };
+            updateUserDataDisplay();
+            console.log("Received updated user data with UUID:", userData);
+        });
+
+        // Handle any join errors
+        socket.on("join-error", (error) => {
+            console.error("Failed to join room:", error.message);
+        });
 
 			// Local-only form handling (no socket emissions)
 			function updateUserDataDisplay() {

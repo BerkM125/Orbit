@@ -18,13 +18,18 @@ function processUserLocation(userData) {
 
 // Add user to the room given user data provided by client
 function addUserToRoom(userData, socketConnection) {
-    const { name, userId, location } = userData;
-    demoRoom.users.push({
-        name,
-        userId,
-        location,
-        socketId: socketConnection.id
-    });
+    const { name, userId, location, linkedin_url, bio, headshot_url } = userData;
+    const userContainer = {
+        name: name,
+        userId: userId,
+        linkedin_url: linkedin_url,
+        bio: bio,
+        headshot_image: headshot_url,
+        socketId: socketConnection.id,
+        location: location
+    }
+
+    demoRoom.users.push(userContainer);
 }
 
 module.exports = { 
