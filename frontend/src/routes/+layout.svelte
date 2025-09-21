@@ -187,6 +187,7 @@
 		z-index: 1000;
 		background: var(--bg-2);
 		gap: 0.5rem;
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 	}
 
 	nav a {

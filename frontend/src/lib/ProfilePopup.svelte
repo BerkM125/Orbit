@@ -106,7 +106,7 @@
 		width: 90%;
 		max-width: 500px;
 		max-height: 80vh;
-		/* box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); */
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 		/* border: 1px solid var(--bg-3);/ */
 		overflow: hidden;
 	}
@@ -155,7 +155,7 @@
 		border-radius: 50%;
 		object-fit: cover;
 		border: 3px solid var(--bg-3);
-		/* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); */
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 	}
 
 	.profile-info {

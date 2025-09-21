@@ -317,7 +317,7 @@
 		background: white;
 		padding: 2rem;
 		border-radius: 1.5rem;
-		box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 		width: 100%;
 		max-width: 600px;
 	}

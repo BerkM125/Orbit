@@ -377,25 +377,11 @@
 		background: var(--bg-2);
 		/* border: 1px solid var(--bg-3); */
 		border-radius: 1.5rem;
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 		padding: 0.75rem 1rem;
 		width: 100%;
 		pointer-events: auto;
 		transition: all 0.2s ease;
-	}
-
-	.chatbot-input:hover {
-		background: var(--bg-3);
-		box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
-		transform: translateY(-1px);
-	}
-
-	.chatbot-input:focus-within {
-		border-color: var(--acc-1);
-		box-shadow:
-			0 6px 16px rgba(0, 0, 0, 0.4),
-			0 0 0 2px rgba(var(--acc-1), 0.2);
-		transform: translateY(-1px);
 	}
 
 	.chatbot-input-icon {
@@ -416,9 +402,9 @@
 		flex: 1;
 		border: none;
 		outline: none;
-		font-size: 16px;
 		background: transparent;
 		color: var(--txt-1);
+		font: inherit;
 	}
 
 	.search-input::placeholder {
@@ -432,18 +418,14 @@
 		height: 3rem;
 		border-radius: 50%;
 		border: 2px solid var(--bg-1);
-		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 		cursor: pointer;
 		overflow: hidden;
 		background-color: var(--bg-2);
+		z-index: 100;
 		transition:
 			transform 0.2s ease,
 			box-shadow 0.2s ease;
-	}
-
-	:global(.circular-marker:hover) {
-		transform: scale(1.1);
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 	}
 
 	:global(.marker-image) {
@@ -482,7 +464,7 @@
 		width: 90%;
 		max-width: 600px;
 		max-height: 80vh;
-		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 		/* border: 1px solid var(--bg-3); */
 	}
 
@@ -507,10 +489,6 @@
 		color: var(--txt-2);
 		cursor: pointer;
 		padding: 0.5rem;
-	}
-
-	.close-button:hover {
-		color: var(--txt-0);
 	}
 
 	.results-container {
@@ -577,11 +555,6 @@
 		transition:
 			transform 0.2s ease,
 			background 0.2s ease;
-	}
-
-	.wave-button:hover {
-		transform: scale(1.05);
-		background: var(--acc-2);
 	}
 
 	.wave-button:active {

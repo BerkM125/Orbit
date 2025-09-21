@@ -76,9 +76,7 @@
 		background: white;
 		padding: 3rem;
 		border-radius: 1.5rem;
-		box-shadow:
-			0 20px 25px -5px rgba(0, 0, 0, 0.1),
-			0 10px 10px -5px rgba(0, 0, 0, 0.04);
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 		max-width: 400px;
 		width: 100%;
 		text-align: center;

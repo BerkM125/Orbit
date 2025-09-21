@@ -196,9 +196,7 @@
 		background: white;
 		padding: 3rem;
 		border-radius: 1.5rem;
-		box-shadow:
-			0 20px 25px -5px rgba(0, 0, 0, 0.1),
-			0 10px 10px -5px rgba(0, 0, 0, 0.04);
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 		max-width: 500px;
 		width: 100%;
 	}
@@ -245,7 +243,7 @@
 	textarea:focus {
 		outline: none;
 		border-color: #667eea;
-		box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+		box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
 	}
 
 	input:disabled,

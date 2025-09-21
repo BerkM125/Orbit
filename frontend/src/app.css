@@ -64,6 +64,9 @@ a {
 #map .mapboxgl-ctrl-icon {
 	filter: invert(1);
 }
+#map .mapboxgl-ctrl-icon[title='Find my location'] {
+	filter: invert(1) hue-rotate(-100deg) saturate(0.6);
+}
 #map .mapboxgl-ctrl-group {
 	background: transparent;
 	display: flex;
