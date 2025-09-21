@@ -3,7 +3,7 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import { onMount } from 'svelte';
 	import io from 'socket.io-client';
-	import { data as localData } from '$lib/data.svelte.js';
+	import { localData } from '$lib/data.svelte.js';
 	let { children } = $props();
 
 	function convertDataToDict(data) {
@@ -17,7 +17,7 @@
 	// Initiate socket connections on mount
 	onMount(() => {
 		console.log('layout onmount');
-		console.log(localData.user);
+		$inspect(localData.user);
 
 		// Connect to socket.io using configurable backend URL
 		const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';

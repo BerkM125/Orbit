@@ -1,4 +1,4 @@
-export class data {
+class LocalData {
 	dict = $state({});
 	user = $state({
 		name: 'SAMPLE USERNAME',
@@ -13,3 +13,5 @@ export class data {
 		}
 	});
 }
+
+export const localData = new LocalData();
