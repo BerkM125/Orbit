@@ -9,6 +9,46 @@
 		profile = null;
 	}
 
+	const sendWaveMessage = async (name, phone) => {
+		const accountSid = 'SK9d052fc640cbd5fc9ac40a7f93583db4';
+		const authToken = 'jNm5jMoVjKviPknmmLdxnrN15tStQPyS';
+
+		// Create base64 encoded credentials for Basic Auth
+		const credentials = btoa(`${accountSid}:${authToken}`);
+
+		const formData = new URLSearchParams();
+		formData.append('From', '+12315599669');
+		formData.append('To', phone);
+		formData.append('Body', `Hey ${name}, let's connect!`);
+
+		try {
+			const response = await fetch(
+				`https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
+				{
+					method: 'POST',
+					headers: {
+						Authorization: `Basic ${credentials}`,
+						'Content-Type': 'application/x-www-form-urlencoded'
+					},
+					body: formData.toString()
+				}
+			);
+
+			if (response.ok) {
+				const data = await response.json();
+				console.log('SMS sent successfully:', data);
+				return data;
+			} else {
+				const error = await response.json();
+				console.error('Error sending SMS:', error);
+				throw new Error(`HTTP ${response.status}: ${error.message}`);
+			}
+		} catch (error) {
+			console.error('Request failed:', error);
+			throw error;
+		}
+	};
+
 	function handleBackdropClick(event) {
 		if (event.target === event.currentTarget) {
 			closePopup();
@@ -68,17 +108,26 @@
 					<p class="profile-bio">{profile.profileInfo.bio}</p>
 				{/if}
 
-				{#if profile.profileInfo?.linkedIn}
-					<a
-						href={profile.profileInfo.linkedIn}
-						target="_blank"
-						rel="noopener noreferrer"
-						class="linkedin-button"
+				<div class="button-row">
+					{#if profile.profileInfo?.linkedIn}
+						<a
+							href={profile.profileInfo.linkedIn}
+							target="_blank"
+							rel="noopener noreferrer"
+							class="linkedin-button"
+						>
+							<LinkedInIcon />
+							LinkedIn
+						</a>
+					{/if}
+
+					<button
+						class="wave-button"
+						onclick={() => sendWaveMessage(profile.first_name, '16478960801')}
 					>
-						<LinkedInIcon />
-						LinkedIn
-					</a>
-				{/if}
+						👋 &nbsp;Wave
+					</button>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -172,7 +221,7 @@
 	}
 
 	.profile-bio {
-		margin: 0 0 1rem 0;
+		margin: 0 0 1.5rem 0;
 		color: var(--txt-1);
 		line-height: 1.5;
 		font-size: 1rem;
@@ -191,6 +240,12 @@
 		font-size: 0.9rem;
 	}
 
+	.button-row {
+		display: flex;
+		gap: 0.75rem;
+		margin-top: 0.5rem;
+	}
+
 	.linkedin-button {
 		display: flex;
 		align-items: center;
@@ -203,12 +258,31 @@
 		padding: 0.75rem;
 		background: var(--purple-1);
 		border-radius: 1.5rem;
-		width: 100%;
+		flex: 1;
 		box-sizing: border-box;
-		margin-top: 0.5rem;
 	}
 
 	.linkedin-button :global(svg) {
 		font-size: 1rem;
+	}
+
+	.wave-button {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		background: var(--bg-3);
+		color: var(--txt-0);
+		border: none;
+		border-radius: 1.5rem;
+		padding: 0.75rem 1rem;
+		font-size: 0.9rem;
+		cursor: pointer;
+		transition:
+			transform 0.2s ease,
+			background 0.2s ease;
+	}
+
+	.wave-button:active {
+		transform: scale(0.95);
 	}
 </style>

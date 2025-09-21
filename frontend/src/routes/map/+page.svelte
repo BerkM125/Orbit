@@ -226,42 +226,44 @@
 	}
 
 	const sendWaveMessage = async (name, phone) => {
-	const accountSid = 'SK9d052fc640cbd5fc9ac40a7f93583db4';
-	const authToken = 'jNm5jMoVjKviPknmmLdxnrN15tStQPyS';
+		const accountSid = 'SK9d052fc640cbd5fc9ac40a7f93583db4';
+		const authToken = 'jNm5jMoVjKviPknmmLdxnrN15tStQPyS';
 
-	// Create base64 encoded credentials for Basic Auth
-	const credentials = btoa(`${accountSid}:${authToken}`);
+		// Create base64 encoded credentials for Basic Auth
+		const credentials = btoa(`${accountSid}:${authToken}`);
 
-	const formData = new URLSearchParams();
-	formData.append('From', '+12315599669');
-	formData.append('To', phone);
-	formData.append('Body', `Hey ${name}, let's connect!`);
+		const formData = new URLSearchParams();
+		formData.append('From', '+12315599669');
+		formData.append('To', phone);
+		formData.append('Body', `Hey ${name}, let's connect!`);
 
-	try {
-		const response = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`, {
-			method: 'POST',
-			headers: {
-				'Authorization': `Basic ${credentials}`,
-				'Content-Type': 'application/x-www-form-urlencoded'
-			},
-			body: formData.toString()
-		});
+		try {
+			const response = await fetch(
+				`https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
+				{
+					method: 'POST',
+					headers: {
+						Authorization: `Basic ${credentials}`,
+						'Content-Type': 'application/x-www-form-urlencoded'
+					},
+					body: formData.toString()
+				}
+			);
 
-		if (response.ok) {
-			const data = await response.json();
-			console.log('SMS sent successfully:', data);
-			return data;
-		} else {
-			const error = await response.json();
-			console.error('Error sending SMS:', error);
-			throw new Error(`HTTP ${response.status}: ${error.message}`);
-		}
+			if (response.ok) {
+				const data = await response.json();
+				console.log('SMS sent successfully:', data);
+				return data;
+			} else {
+				const error = await response.json();
+				console.error('Error sending SMS:', error);
+				throw new Error(`HTTP ${response.status}: ${error.message}`);
+			}
 		} catch (error) {
 			console.error('Request failed:', error);
 			throw error;
 		}
 	};
-
 </script>
 
 <svelte:head>
@@ -338,9 +340,10 @@
 											LinkedIn Profile
 										</a>
 									{/if}
-									<button 
-										class="wave-button" 
-										onclick={() => sendWaveMessage(result.first_name, "16478960801")}
+									<button
+										class="wave-button"
+										onclick={() =>
+											sendWaveMessage(result.first_name, '16478960801')}
 									>
 										👋 Wave
 									</button>
