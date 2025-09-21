@@ -1,4 +1,7 @@
 <script>
+	import XIcon from '~icons/ph/x';
+	import LinkedInIcon from '~icons/ph/linkedin-logo';
+
 	let { isOpen = $bindable(false), profile = $bindable(null) } = $props();
 
 	function closePopup() {
@@ -30,47 +33,52 @@
 		aria-label="Profile popup"
 	>
 		<div class="popup-container">
-			<button class="close-button" onclick={closePopup}>×</button>
+			<button class="close-button" onclick={closePopup}>
+				<XIcon />
+			</button>
 
 			<div class="profile-content">
-				<div class="profile-image-container">
-					<img
-						src={profile.profileInfo?.headshot ||
-							'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y.jpg'}
-						alt="{profile.first_name} {profile.last_name}"
-						class="profile-image"
-					/>
+				<div class="profile-header">
+					<div class="profile-image-container">
+						<img
+							src={profile.profileInfo?.headshot ||
+								'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y.jpg'}
+							alt="{profile.first_name} {profile.last_name}"
+							class="profile-image"
+						/>
+					</div>
+
+					<div class="profile-info">
+						<h1 class="profile-name">
+							{profile.first_name}
+							{profile.last_name}
+						</h1>
+
+						{#if profile.profileInfo?.company}
+							<p class="company">{profile.profileInfo.company}</p>
+						{/if}
+
+						{#if profile.profileInfo?.title}
+							<p class="title">{profile.profileInfo.title}</p>
+						{/if}
+					</div>
 				</div>
 
-				<div class="profile-info">
-					<h1 class="profile-name">
-						{profile.first_name}
-						{profile.last_name}
-					</h1>
+				{#if profile.profileInfo?.bio}
+					<p class="profile-bio">{profile.profileInfo.bio}</p>
+				{/if}
 
-					{#if profile.profileInfo?.bio}
-						<p class="profile-bio">{profile.profileInfo.bio}</p>
-					{/if}
-
-					{#if profile.profileInfo?.linkedin_url}
-						<a
-							href={profile.profileInfo.linkedin_url}
-							target="_blank"
-							rel="noopener noreferrer"
-							class="linkedin-link"
-						>
-							LinkedIn Profile
-						</a>
-					{/if}
-
-					{#if profile.profileInfo?.company}
-						<p class="company">{profile.profileInfo.company}</p>
-					{/if}
-
-					{#if profile.profileInfo?.title}
-						<p class="title">{profile.profileInfo.title}</p>
-					{/if}
-				</div>
+				{#if profile.profileInfo?.linkedIn}
+					<a
+						href={profile.profileInfo.linkedIn}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="linkedin-button"
+					>
+						<LinkedInIcon />
+						LinkedIn
+					</a>
+				{/if}
 			</div>
 		</div>
 	</div>
@@ -94,12 +102,12 @@
 	.popup-container {
 		position: relative;
 		background: var(--bg-2);
-		border-radius: 12px;
+		border-radius: 1.5rem;
 		width: 90%;
 		max-width: 500px;
 		max-height: 80vh;
-		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-		border: 1px solid var(--bg-3);
+		/* box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); */
+		/* border: 1px solid var(--bg-3);/ */
 		overflow: hidden;
 	}
 
@@ -107,9 +115,8 @@
 		position: absolute;
 		top: 1rem;
 		right: 1rem;
-		background: none;
+		background: var(--bg-3);
 		border: none;
-		font-size: 1.5rem;
 		color: var(--txt-2);
 		cursor: pointer;
 		padding: 0.5rem;
@@ -123,39 +130,45 @@
 		transition: all 0.2s ease;
 	}
 
-	.close-button:hover {
-		color: var(--txt-0);
-		background: var(--bg-3);
+	.close-button :global(svg) {
+		font-size: 1.25rem;
 	}
 
 	.profile-content {
-		padding: 2rem;
-		text-align: center;
+		padding: 1rem;
+	}
+
+	.profile-header {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		margin-bottom: 1rem;
 	}
 
 	.profile-image-container {
-		position: relative;
-		margin-bottom: 1.5rem;
+		flex-shrink: 0;
 	}
 
 	.profile-image {
-		width: 120px;
-		height: 120px;
+		width: 80px;
+		height: 80px;
 		border-radius: 50%;
 		object-fit: cover;
-		border: 4px solid var(--bg-1);
-		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+		border: 3px solid var(--bg-3);
+		/* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); */
 	}
 
 	.profile-info {
-		text-align: center;
+		flex: 1;
+		min-width: 0;
 	}
 
 	.profile-name {
-		margin: 0 0 1rem 0;
+		margin: 0 0 0.5rem 0;
 		color: var(--txt-0);
 		font-size: 1.5rem;
 		font-weight: 600;
+		line-height: 1.2;
 	}
 
 	.profile-bio {
@@ -166,31 +179,36 @@
 	}
 
 	.company {
-		margin: 0 0 0.5rem 0;
+		margin: 0 0 0.25rem 0;
 		color: var(--txt-1);
 		font-size: 1rem;
 		font-weight: 500;
 	}
 
 	.title {
-		margin: 0 0 1rem 0;
+		margin: 0 0 0.5rem 0;
 		color: var(--txt-2);
 		font-size: 0.9rem;
 	}
 
-	.linkedin-link {
-		display: inline-block;
-		color: var(--acc-1);
+	.linkedin-button {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem;
+		color: var(--bg-1);
 		text-decoration: none;
-		font-size: 1rem;
-		padding: 0.5rem 1rem;
-		border: 1px solid var(--acc-1);
-		border-radius: 6px;
-		transition: all 0.2s ease;
+		font-size: 0.9rem;
+		font-weight: 500;
+		padding: 0.75rem;
+		background: var(--purple-1);
+		border-radius: 1.5rem;
+		width: 100%;
+		box-sizing: border-box;
+		margin-top: 0.5rem;
 	}
 
-	.linkedin-link:hover {
-		background: var(--acc-1);
-		color: var(--bg-1);
+	.linkedin-button :global(svg) {
+		font-size: 1rem;
 	}
 </style>
