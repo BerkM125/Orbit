@@ -120,7 +120,6 @@
         max-width: 800px;
         margin: 0 auto;
         padding: 2rem;
-        font-family: 'DM Mono', monospace;
     }
 
     .profile-header {
@@ -135,43 +134,39 @@
         font-weight: 300;
     }
 
-    /* Button styles */
     .logout-btn, .setup-link {
         display: flex;
         align-items: center;
         gap: 0.5rem;
         border: none;
         padding: 0.75rem 1.5rem;
-        border-radius: 0.375rem;
+        border-radius: 0.5rem;
         font-size: 0.875rem;
         cursor: pointer;
         transition: all 0.2s ease;
-        font-family: inherit;
         font-weight: 500;
         text-decoration: none;
         justify-content: center;
     }
 
-    /* Danger action - Red */
     .logout-btn {
-        background: #dc2626;
-        color: white;
+        background: var(--purple-1);
+        color: var(--bg-1);
     }
 
     .logout-btn:hover {
-        background: #b91c1c;
+        background: var(--purple-2);
     }
 
-    /* Setup link - Blue outline */
     .setup-link {
         background: transparent;
-        color: #2563eb;
-        border: 2px solid #2563eb;
+        color: var(--purple-1);
+        border: 2px solid var(--purple-1);
     }
 
     .setup-link:hover {
-        background: #2563eb;
-        color: white;
+        background: var(--purple-1);
+        color: var(--bg-1);
     }
 
     .logout-btn svg {
@@ -194,7 +189,7 @@
         width: 32px;
         height: 32px;
         border: 3px solid var(--bg-3);
-        border-top: 3px solid var(--acc-1);
+        border-top: 3px solid var(--purple-1);
         border-radius: 50%;
         animation: spin 1s linear infinite;
         margin-bottom: 1rem;
@@ -210,7 +205,6 @@
         border: 1px solid var(--bg-3);
         border-radius: 0.5rem;
         padding: 2rem;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
 
     .profile-avatar {
@@ -263,14 +257,14 @@
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        color: var(--acc-1);
+        color: var(--purple-1);
         text-decoration: none;
         font-size: 0.875rem;
         transition: color 0.2s ease;
     }
 
     .linkedin-link:hover {
-        color: var(--acc-2);
+        color: var(--purple-2);
     }
 
     .linkedin-link svg {
@@ -311,12 +305,6 @@
     @media (max-width: 768px) {
         .profile-container {
             padding: 1rem;
-        }
-
-        .profile-header {
-            flex-direction: column;
-            gap: 1rem;
-            align-items: center;
         }
 
         .profile-avatar img {
