@@ -14,6 +14,7 @@
 	let searchResults = $state([]);
 	let selectedProfile = $state(null);
 	let showProfilePopup = $state(false);
+	let cameFromSearch = $state(false);
 
 	// Helper function to get coordinates from a person object
 	function getCoords(person) {
@@ -84,6 +85,7 @@
 			if (fullProfile) {
 				selectedProfile = fullProfile;
 				showProfilePopup = true;
+				cameFromSearch = false;
 			}
 		});
 	}
@@ -223,6 +225,33 @@
 	function closeProfilePopup() {
 		showProfilePopup = false;
 		selectedProfile = null;
+		cameFromSearch = false;
+	}
+
+	function backToSearch() {
+		showProfilePopup = false;
+		selectedProfile = null;
+		cameFromSearch = false;
+		showSearchResults = true;
+	}
+
+	function openProfileFromSearch(result) {
+		// Convert search result format to profile format expected by ProfilePopup
+		selectedProfile = {
+			id: result.id || `search-${result.first_name}-${result.last_name}`,
+			first_name: result.first_name,
+			last_name: result.last_name,
+			profileInfo: {
+				headshot: result.profileInfo?.headshot || result.headshot_image || result.headshot,
+				bio: result.profileInfo?.bio || result.bio || result.description || result.about,
+				company: result.profileInfo?.company || result.company || result.organization,
+				title: result.profileInfo?.title || result.title || result.position || result.job_title,
+				linkedIn: result.profileInfo?.linkedIn || result.linkedin_url || result.linkedin || result.linkedIn
+			}
+		};
+		showProfilePopup = true;
+		showSearchResults = false;
+		cameFromSearch = true;
 	}
 
 	const sendWaveMessage = async (name, phone) => {
@@ -322,29 +351,32 @@
 						<p class="no-results">No results found</p>
 					{:else}
 						{#each searchResults as result}
-							<div class="result-card">
+							<div class="result-card" onclick={() => openProfileFromSearch(result)}>
 								<img
-									src={result.headshot_image}
+									src={result.profileInfo?.headshot || result.headshot_image || result.headshot}
 									alt={`${result.first_name} ${result.last_name}`}
 									class="result-avatar"
 								/>
 								<div class="result-info">
 									<h3>{result.first_name} {result.last_name}</h3>
-									<p class="bio">{result.bio || 'No bio available'}</p>
-									{#if result.linkedin_url}
+									<p class="bio">{result.profileInfo?.bio || result.bio || result.description || result.about || 'No bio available'}</p>
+									{#if result.profileInfo?.linkedIn || result.linkedin_url || result.linkedin || result.linkedIn}
 										<a
-											href={result.linkedin_url}
+											href={result.profileInfo?.linkedIn || result.linkedin_url || result.linkedin || result.linkedIn}
 											target="_blank"
 											rel="noopener noreferrer"
 											class="linkedin-link"
+											onclick={(e) => e.stopPropagation()}
 										>
 											LinkedIn Profile
 										</a>
 									{/if}
 									<button
 										class="wave-button"
-										onclick={() =>
-											sendWaveMessage(result.first_name, '16478960801')}
+										onclick={(e) => {
+											e.stopPropagation();
+											sendWaveMessage(result.first_name, '16478960801');
+										}}
 									>
 										👋 Wave
 									</button>
@@ -358,7 +390,12 @@
 	{/if}
 
 	<!-- Profile Popup -->
-	<ProfilePopup bind:isOpen={showProfilePopup} bind:profile={selectedProfile} />
+	<ProfilePopup
+		bind:isOpen={showProfilePopup}
+		bind:profile={selectedProfile}
+		showBackButton={cameFromSearch}
+		onBack={backToSearch}
+	/>
 </div>
 
 <style>
@@ -519,7 +556,13 @@
 		border-radius: 1.5rem;
 		background: var(--bg-1);
 		margin-bottom: 1rem;
+		cursor: pointer;
+		transition: background 0.2s ease;
 		/* border: 1px solid var(--bg-3); */
+	}
+
+	.result-card:hover {
+		background: var(--bg-3);
 	}
 
 	.result-avatar {
