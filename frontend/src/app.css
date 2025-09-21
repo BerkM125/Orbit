@@ -1,5 +1,11 @@
 :root {
 	font-family: 'Rethink Sans', sans-serif;
+	--txt-1: hsl(200, 20%, 10%);
+	--txt-2: hsl(200, 18%, 20%);
+	--txt-3: hsl(200, 16%, 30%);
+	--bg-3: hsl(200, 14%, 75%);
+	--bg-2: hsl(200, 12%, 80%);
+	--bg-1: hsl(200, 10%, 85%);
 }
 
 * {
@@ -15,4 +21,16 @@ body {
 	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
+	display: flex;
+	background: var(--bg-1);
+	color: var(--txt-1);
+}
+
+a {
+	text-decoration: none;
+	color: inherit;
+}
+
+.icon {
+	color: inherit;
 }
