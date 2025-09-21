@@ -8,6 +8,8 @@
 	let pageLoaded = false;
 	let mapboxgl;
 	let searchValue = '';
+	let showSearchResults = false;
+	let searchResults = [];
 
 	class People {
 		constructor(id, longitude, latitude, name, bio) {
@@ -172,16 +174,6 @@
 			// Add navigation controls
 			map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
-			// Function to search for people using langflow powered search
-			async function searchForPeople(searchParams) {
-				console.log('Searching for:', searchParams);
-				// await an http request to https://6f3ad484c5c1.ngrok-free.app/search/[searchParams]
-				const response = await fetch(`https://6f3ad484c5c1.ngrok-free.app/search/${encodeURIComponent(searchParams)}`);
-				const results = await response.json();
-				alert("RESULTS IN CONSOLE!");
-				console.log("RESULTS: ", results);
-			}
-
 			// Upon clicking the magnifying glass, search for the people!
 			document.getElementsByClassName("chatbot-input-icon")[0].addEventListener("click", async () => {
 				await searchForPeople(searchValue);
@@ -208,6 +200,24 @@
 			delete mapMarkers[id];
 		}
 		allPeople = allPeople.filter((person) => person.id !== id);
+	}
+
+	// Update the searchForPeople function
+	async function searchForPeople(searchParams) {
+		console.log('Searching for:', searchParams);
+		try {
+			const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
+			const response = await fetch(`${backendUrl}/search?searchQuery=${encodeURIComponent(searchParams)}`);
+			const results = await response.json();
+			searchResults = results;
+			showSearchResults = true;
+		} catch (error) {
+			console.error('Search failed:', error);
+		}
+	}
+
+	function closeSearchResults() {
+		showSearchResults = false;
 	}
 </script>
 
@@ -240,7 +250,44 @@
 			/>
 		</div>
 	</div>
+
+	{#if showSearchResults}
+		<div class="modal-backdrop" on:click={closeSearchResults}>
+			<div class="search-results-modal" on:click|stopPropagation>
+				<div class="modal-header">
+					<h2>Search Results</h2>
+					<button class="close-button" on:click={closeSearchResults}>×</button>
+				</div>
+				<div class="results-container">
+					{#if !searchResults || searchResults.length === 0}
+						<p class="no-results">No results found</p>
+					{:else}
+						{#each searchResults as result}
+							<div class="result-card">
+								<img 
+									src={result.headshot_image} 
+									alt={`${result.first_name} ${result.last_name}`}
+									class="result-avatar"
+								/>
+								<div class="result-info">
+									<h3>{result.first_name} {result.last_name}</h3>
+									<p class="bio">{result.bio || 'No bio available'}</p>
+									{#if result.linkedin_url}
+										<a href={result.linkedin_url} target="_blank" rel="noopener noreferrer" class="linkedin-link">
+											LinkedIn Profile
+										</a>
+									{/if}
+								</div>
+							</div>
+						{/each}
+					{/if}
+				</div>
+			</div>
+		</div>
+	{/if}
 </div>
+
+
 
 <style>
 	/* === LAYOUT === */
@@ -356,5 +403,111 @@
 			min-height: 48px; /* Ensures touch target is at least 48px */
 		}
 	}
+
+    /* Modal css styles */
+    .modal-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .search-results-modal {
+        background: var(--bg-2);
+        border-radius: 8px;
+        width: 90%;
+        max-width: 600px;
+        max-height: 80vh;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        border: 1px solid var(--bg-3);
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        border-bottom: 1px solid var(--bg-3);
+    }
+
+    .modal-header h2 {
+        margin: 0;
+        font-size: 1.25rem;
+        color: var(--txt-0);
+    }
+
+    .close-button {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: var(--txt-2);
+        cursor: pointer;
+        padding: 0.5rem;
+    }
+
+    .close-button:hover {
+        color: var(--txt-0);
+    }
+
+    .results-container {
+        overflow-y: auto;
+        max-height: calc(80vh - 60px);
+        padding: 1rem;
+    }
+
+    .result-card {
+        display: flex;
+        gap: 1rem;
+        padding: 1rem;
+        border-radius: 4px;
+        background: var(--bg-1);
+        margin-bottom: 1rem;
+        border: 1px solid var(--bg-3);
+    }
+
+    .result-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .result-info {
+        flex: 1;
+    }
+
+    .result-info h3 {
+        margin: 0 0 0.5rem 0;
+        color: var(--txt-0);
+        font-size: 1rem;
+    }
+
+    .bio {
+        margin: 0 0 0.5rem 0;
+        color: var(--txt-1);
+        font-size: 0.875rem;
+    }
+
+    .linkedin-link {
+        color: var(--acc-1);
+        text-decoration: none;
+        font-size: 0.875rem;
+    }
+
+    .linkedin-link:hover {
+        text-decoration: underline;
+    }
+
+    .no-results {
+        text-align: center;
+        color: var(--txt-2);
+        padding: 2rem;
+    }
 
 </style>
