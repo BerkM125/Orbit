@@ -1,42 +1,85 @@
 <script>
-	import '../app.css';
-	import favicon from '$lib/assets/favicon.svg';
-	import { onMount } from 'svelte';
-	import io from 'socket.io-client';
-	import { localData } from '$lib/data.svelte.js';
-	let { children } = $props();
+    import '../app.css';
+    import favicon from '$lib/assets/favicon.svg';
+    import { onMount } from 'svelte';
+    import { page } from '$app/stores';
+    import { goto } from '$app/navigation';
+      import io from 'socket.io-client';
+    import { authStore } from '$lib/stores/auth.svelte.js';
 
-	function convertDataToDict(data) {
-		const dict = {};
-		data.users.forEach((user) => {
-			dict[user.userId] = user;
-		});
-		return dict;
-	}
+    let { children } = $props();
+    let dict = $state({});
+    let socket = $state(null);
 
-	onMount(() => {
-		console.log('layout onmount');
-		$inspect(localData.user);
+    // Pages that don't require authentication
+    const publicPages = ['/login'];
 
-		// Connect to socket.io using configurable backend URL
-		const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
-		const socket = io(backendUrl);
+    // Turn all loaded users' data to a dictionary for easy retrieval
+    function convertDataToDict(data) {
+        data.users.forEach((user) => {
+            dict[user.userId] = user;
+        });
+    }
 
-		// Join the server room
-		socket.emit('join-room', localData.user);
+    // Initialize socket connection for authenticated users
+    function initializeSocket() {
+        if (!authStore.isAuthenticated || socket) return;
 
-		// This is how to listen for requests to get this user's location
-		socket.on('get-location', () => {
-			socket.emit('send-location', localData.user);
-		});
+        // Link to the Express app server running socketio
+        socket = io('https://6f3ad484c5c1.ngrok-free.app');
 
-		// This is how to listen for the server sending all user locations
-		socket.on('update-data', (data) => {
-			console.log('update-data', data);
-			localData.dict = convertDataToDict(data);
-			console.log(JSON.stringify(localData.dict));
-		});
-	});
+        // Join the server room with authenticated user data
+        const userData = {
+            userId: authStore.user.id,
+            name: authStore.user.user_metadata?.full_name || authStore.user.email,
+            email: authStore.user.email,
+            avatar_url: authStore.user.user_metadata?.avatar_url,
+            location: {
+                latitude: 47.6062, // Default location, will be updated with real location
+                longitude: -122.3321
+            }
+        };
+
+        socket.emit("join-room", userData);
+
+        // Listen for requests to get this user's location
+        socket.on('get-location', () => {
+            socket.emit('send-location', userData)
+        })
+
+        // Listen for the server sending all user locations
+        socket.on("update-data", (data) => {
+            dict = convertDataToDict(data);
+            console.log(JSON.stringify(dict));
+        });
+    }
+
+    // Check authentication and redirect if necessary
+    $effect(() => {
+        if (authStore.loading) return;
+
+        const currentPath = $page.url.pathname;
+        const isPublicPage = publicPages.includes(currentPath);
+
+        if (!authStore.isAuthenticated && !isPublicPage) {
+            goto('/login');
+            return;
+        }
+
+        if (authStore.isAuthenticated && currentPath === '/login') {
+            goto('/profile');
+            return;
+        }
+
+        // Initialize socket for authenticated users
+        if (authStore.isAuthenticated) {
+            initializeSocket();
+        }
+    });
+
+    onMount(() => {
+        console.log('Layout mounted.');
+    });
 </script>
 
 <svelte:head>
@@ -44,28 +87,38 @@
 </svelte:head>
 
 <div class="container">
-	<nav>
-		<a href="/">Home</a>
-		<a href="/map">Map</a>
-		<a href="/profile">Profile</a>
-	</nav>
-	<main>
-		{@render children?.()}
-	</main>
+    {#if authStore.isAuthenticated}
+        <nav>
+            <a href="/">Home</a>
+            <a href="/map">Map</a>
+            <a href="/profile">Profile</a>
+        </nav>
+    {/if}
+    <main>
+        {@render children?.()}
+    </main>
 </div>
 
 <style>
-	nav {
-		display: flex;
-		position: fixed;
-		bottom: 0;
-		width: 100%;
-		justify-content: space-around;
-		padding: 1rem;
-		z-index: 1000;
-	}
+    nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        justify-content: space-around;
+        align-items: center;
+        padding: 1rem;
+        z-index: 1000;
+        background: white;
+        border-top: 1px solid #e5e7eb;
+    }
 
-	.container {
-		height: 100%;
-	}
+
+    main {
+        padding-bottom: 6rem; /* Account for fixed navigation */
+    }
+
+    .container {
+        height: 100%;
+    }
 </style>
