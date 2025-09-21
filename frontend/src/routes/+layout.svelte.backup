@@ -16,18 +16,9 @@
 
     // Turn all loaded users' data to a dictionary for easy retrieval
     function convertDataToDict(data) {
-        if (!data || !data.users) {
-            console.warn('Invalid data received:', data);
-            return {};
-        }
-        
-        const newDict = {};
         data.users.forEach((user) => {
-            if (user && user.userId) {
-                newDict[user.userId] = user;
-            }
+            dict[user.userId] = user;
         });
-        return newDict;
     }
 
     // Initialize socket connection for authenticated users
@@ -35,7 +26,7 @@
         if (!authStore.isAuthenticated || socket) return;
 
         // Link to the Express app server running socketio
-        socket = io('http://localhost:3001');
+        socket = io('https://6f3ad484c5c1.ngrok-free.app');
 
         // Join the server room with authenticated user data
         const userData = {
@@ -59,7 +50,7 @@
         // Listen for the server sending all user locations
         socket.on("update-data", (data) => {
             dict = convertDataToDict(data);
-            console.log('Updated user dict:', JSON.stringify(dict));
+            console.log(JSON.stringify(dict));
         });
     }
 
