@@ -28,9 +28,10 @@
 	// Fetch people data from backend
 	async function fetchPeopleData() {
 		try {
-			const response = await fetch('https://6f3ad484c5c1.ngrok-free.app/room');
+			const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
+			const response = await fetch(`${backendUrl}/room`);
 			const data = await response.json();
-			
+
 			// Create People objects from Supabase data
 			const people = data.users.map((user, index) => {
 				return new People(
@@ -41,7 +42,7 @@
 					user.profileInfo.bio || 'Professional'
 				);
 			});
-			
+
 			allPeople = people;
 			console.log('Loaded people from backend:', allPeople);
 		} catch (error) {

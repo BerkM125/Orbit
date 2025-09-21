@@ -61,7 +61,12 @@ io.on('connection', (socket) => {
 
 	// Client will emit this to send data to the server
 	socket.on('send-location', (userData) => {
-		processUserLocation(userData);
+		try {
+			console.log('send-location: ', userData);
+			processUserLocation(userData);
+		} catch (error) {
+			console.error('Error processing location:', error);
+		}
 	});
 
 	// Handle user disconnects

@@ -34,24 +34,17 @@
 	<body>
 		<h1>Socket.IO — Join Room Tester</h1>
 		<p>
-			Click the button below to connect to the Socket.IO server and
-			request to join the <strong>cascadia</strong> room.
+			Click the button below to connect to the Socket.IO server and request to join the
+			<strong>cascadia</strong> room.
 		</p>
 		<button id="joinBtn">Join "cascadia" Room</button>
 
 		<section class="form-row">
 			<h3>Update Location (Local Only)</h3>
-			<p>
-				This form updates your location data locally (does not send to
-				server)
-			</p>
+			<p>This form updates your location data locally (does not send to server)</p>
 			<div class="form-row">
-				<label
-					>Latitude: <input type="number" id="latInput" step="any"
-				/></label>
-				<label
-					>Longitude: <input type="number" id="lngInput" step="any"
-				/></label>
+				<label>Latitude: <input type="number" id="latInput" step="any" /></label>
+				<label>Longitude: <input type="number" id="lngInput" step="any" /></label>
 				<button id="updateLocationBtn">Update Location</button>
 			</div>
 			<div id="locationStatus"></div>
@@ -65,91 +58,85 @@
 		<script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
 		<script>
 			// Connect to the socket server
-			const socket = io('https://6f3ad484c5c1.ngrok-free.app')
+			const socket = io('http://localhost:3000');
 
 			// This is an example of the client's "full" database. NOT sent to the server, only received.
 			let localRoomData = {
 				id: 'cascadia',
 				name: 'Cascadia Hackathon',
-				users: [],
-			}
+				users: []
+			};
 
-        // And this is the client's OWN data, that it will SEND to the server.
-        let userData = {
-            name: "Berkan Mertan",
-            // No userId - will be assigned by Supabase
-            linkedin_url: "https://www.linkedin.com/in/berkan-m/",
-            bio: "SDE Intern @ UW",
-            headshot_image: "https://media.licdn.com/dms/image/D4D03AQHjv1eXHk1m7g/profile-displayphoto-shrink_800_800/0/1678887038471?e=1701302400&v=beta&t=ZKJ3nY3c1kC8qfO2nF9lJd8nG4p6Ykz8b9rY3F4g6Uo",
-            location: {
-                latitude: 47.6062,
-                longitude: -122.3321
-            }
-        };
-        
-        // First, join the room with the sample user data
-        socket.emit("join-room", userData);
+			// And this is the client's OWN data, that it will SEND to the server.
+			let userData = {
+				name: 'Berkan Mertan',
+				// No userId - will be assigned by Supabase
+				linkedin_url: 'https://www.linkedin.com/in/berkan-m/',
+				bio: 'SDE Intern @ UW',
+				headshot_image:
+					'https://media.licdn.com/dms/image/D4D03AQHjv1eXHk1m7g/profile-displayphoto-shrink_800_800/0/1678887038471?e=1701302400&v=beta&t=ZKJ3nY3c1kC8qfO2nF9lJd8nG4p6Ykz8b9rY3F4g6Uo',
+				location: {
+					latitude: 47.6062,
+					longitude: -122.3321
+				}
+			};
+
+			// First, join the room with the sample user data
+			socket.emit('join-room', userData);
 
 			// This is how to listen for server requests for location
 			socket.on('get-location', () => {
-				socket.emit('send-location', userData)
-			})
+				socket.emit('send-location', userData);
+			});
 
-        // And this is how to listen for server sending location data
-        socket.on("update-data", (data) => {
-            localRoomData = data;
-            alert(JSON.stringify(localRoomData));
-        });
+			// And this is how to listen for server sending location data
+			socket.on('update-data', (data) => {
+				localRoomData = data;
+				alert(JSON.stringify(localRoomData));
+			});
 
-        // Listen for user data updates (including UUID assignment)
-        socket.on("user-data-updated", (updatedData) => {
-            userData = { ...userData, ...updatedData };
-            updateUserDataDisplay();
-            console.log("Received updated user data with UUID:", userData);
-        });
+			// Listen for user data updates (including UUID assignment)
+			socket.on('user-data-updated', (updatedData) => {
+				userData = { ...userData, ...updatedData };
+				updateUserDataDisplay();
+				console.log('Received updated user data with UUID:', userData);
+			});
 
-        // Handle any join errors
-        socket.on("join-error", (error) => {
-            console.error("Failed to join room:", error.message);
-        });
+			// Handle any join errors
+			socket.on('join-error', (error) => {
+				console.error('Failed to join room:', error.message);
+			});
 
 			// Local-only form handling (no socket emissions)
 			function updateUserDataDisplay() {
-				document.getElementById('userDataDisplay').textContent =
-					JSON.stringify(userData, null, 2)
-				document.getElementById('latInput').value =
-					userData.location.latitude
-				document.getElementById('lngInput').value =
-					userData.location.longitude
+				document.getElementById('userDataDisplay').textContent = JSON.stringify(
+					userData,
+					null,
+					2
+				);
+				document.getElementById('latInput').value = userData.location.latitude;
+				document.getElementById('lngInput').value = userData.location.longitude;
 			}
 
-			document
-				.getElementById('updateLocationBtn')
-				.addEventListener('click', () => {
-					const lat = parseFloat(
-						document.getElementById('latInput').value
-					)
-					const lng = parseFloat(
-						document.getElementById('lngInput').value
-					)
+			document.getElementById('updateLocationBtn').addEventListener('click', () => {
+				const lat = parseFloat(document.getElementById('latInput').value);
+				const lng = parseFloat(document.getElementById('lngInput').value);
 
-					if (Number.isFinite(lat) && Number.isFinite(lng)) {
-						userData.location = { latitude: lat, longitude: lng }
-						updateUserDataDisplay()
-						const status = document.getElementById('locationStatus')
-						status.textContent =
-							'Location updated locally (not sent to server)'
-						status.style.color = 'green'
-					} else {
-						const status = document.getElementById('locationStatus')
-						status.textContent =
-							'Please enter valid numbers for latitude and longitude'
-						status.style.color = 'red'
-					}
-				})
+				if (Number.isFinite(lat) && Number.isFinite(lng)) {
+					userData.location = { latitude: lat, longitude: lng };
+					updateUserDataDisplay();
+					const status = document.getElementById('locationStatus');
+					status.textContent = 'Location updated locally (not sent to server)';
+					status.style.color = 'green';
+				} else {
+					const status = document.getElementById('locationStatus');
+					status.textContent = 'Please enter valid numbers for latitude and longitude';
+					status.style.color = 'red';
+				}
+			});
 
 			// Initial display
-			updateUserDataDisplay()
+			updateUserDataDisplay();
 		</script>
 	</body>
 </html>
