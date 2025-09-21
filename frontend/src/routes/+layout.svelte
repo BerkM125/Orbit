@@ -41,7 +41,7 @@
 
 		try {
 			// Initialize socket connection
-			socket = io('https://694e3406fe15.ngrok-free.app');
+			socket = io('https://ae0df6604866.ngrok-free.app');
 			console.log('Socket connection initialized');
 
 			// Get fresh geolocation

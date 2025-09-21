@@ -204,7 +204,7 @@
 		console.log('Searching for:', searchParams);
 		try {
 			const backendUrl =
-				import.meta.env.VITE_BACKEND_URL || 'https://694e3406fe15.ngrok-free.app';
+				import.meta.env.VITE_BACKEND_URL || 'https://ae0df6604866.ngrok-free.app';
 			const response = await fetch(
 				`${backendUrl}/search-langflow/${encodeURIComponent(searchParams)}`
 			);
@@ -223,6 +223,32 @@
 	function closeProfilePopup() {
 		showProfilePopup = false;
 		selectedProfile = null;
+	}
+
+	async function sendWaveMessage(recipientPhone) {
+		try {
+			const backendUrl = import.meta.env.VITE_BACKEND_URL || 'https://ae0df6604866.ngrok-free.app';
+			const response = await fetch(`${backendUrl}/send-wave`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					to: recipientPhone,
+					from: '+2315599669',
+					authToken: 'SK9d052fc640cbd5fc9ac40a7f93583db4:jNm5jMoVjKviPknmmLdxnrN15tStQPyS'
+				})
+			});
+
+			if (!response.ok) {
+				throw new Error('Failed to send wave');
+			}
+
+			alert('Wave sent! 👋');
+		} catch (error) {
+			console.error('Error sending wave:', error);
+			alert('Failed to send wave message');
+		}
 	}
 </script>
 
@@ -300,6 +326,12 @@
 											LinkedIn Profile
 										</a>
 									{/if}
+									<button 
+										class="wave-button" 
+										onclick={() => sendWaveMessage(result.phone)}
+									>
+										👋 Wave
+									</button>
 								</div>
 							</div>
 						{/each}
@@ -527,6 +559,30 @@
 
 	.linkedin-link:hover {
 		text-decoration: underline;
+	}
+
+	.wave-button {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		background: var(--acc-1);
+		color: var(--txt-0);
+		border: none;
+		border-radius: 4px;
+		padding: 0.5rem 1rem;
+		font-size: 0.875rem;
+		cursor: pointer;
+		margin-top: 0.75rem;
+		transition: transform 0.2s ease, background 0.2s ease;
+	}
+
+	.wave-button:hover {
+		transform: scale(1.05);
+		background: var(--acc-2);
+	}
+
+	.wave-button:active {
+		transform: scale(0.95);
 	}
 
 	.no-results {
