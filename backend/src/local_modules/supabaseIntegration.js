@@ -29,8 +29,8 @@ async function getAllUserProfiles(supabase) {
 
 	// Transform Supabase user profiles to match demoRoom users structure
 	const transformedUsers = data.map((profile) => ({
-		// Use the Supabase UUID as userId
-		userId: profile.id,
+		// Use the Supabase UUID as id
+		id: profile.id,
 		// Use separate name fields
 		first_name: profile.first_name,
 		last_name: profile.last_name,
@@ -67,12 +67,9 @@ async function syncRoomDataToSupabase(supabase, users) {
 
 	// Process each user in parallel
 	const updatePromises = users.map(async (user) => {
-		// Skip users without a valid userId (temporary socket-only users)
-		if (!user.userId) {
-			console.log(
-				'Skipping user without userId:',
-				`${user.first_name} ${user.last_name}`.trim()
-			);
+		// Skip users without a valid id (temporary socket-only users)
+		if (!user.id) {
+			console.log('Skipping user without id:', `${user.first_name} ${user.last_name}`.trim());
 			return;
 		}
 
@@ -123,12 +120,12 @@ async function syncRoomDataToSupabase(supabase, users) {
 		};
 
 		// Update the user profile in Supabase
-		const { error } = await supabase.from('documents').update(userData).eq('id', user.userId);
+		const { error } = await supabase.from('documents').update(userData).eq('id', user.id);
 
 		if (error) {
-			console.error(`Error updating user ${user.userId}:`, error.message);
+			console.error(`Error updating user ${user.id}:`, error.message);
 		} else {
-			console.log(`Successfully updated user ${user.userId} in Supabase`);
+			console.log(`Successfully updated user ${user.id} in Supabase`);
 		}
 	});
 
@@ -197,10 +194,11 @@ async function createOrUpdateUserProfile(supabase, userData) {
 			? userData.longitude
 			: DEFAULT_LOCATION.longitude;
 
-	// Generate a unique phone number if none provided
-	const DEFAULT_PHONE = `+1206${Math.floor(Math.random() * 10000000)
+	// Generate a unique phone number if none provided (XXX-XXX-XXXX format)
+	const randomPhoneDigits = Math.floor(Math.random() * 10000000)
 		.toString()
-		.padStart(7, '0')}`;
+		.padStart(7, '0');
+	const DEFAULT_PHONE = `206-${randomPhoneDigits.slice(0, 3)}-${randomPhoneDigits.slice(3)}`;
 
 	// Prepare the user data in Supabase format
 	const supabaseUser = {
@@ -245,7 +243,7 @@ async function createOrUpdateUserProfile(supabase, userData) {
 			}
 			return {
 				...userData,
-				userId: existingUser.id,
+				id: existingUser.id,
 				profileInfo: {
 					linkedIn: existingUser.linkedin_url,
 					bio: existingUser.bio,
@@ -260,15 +258,13 @@ async function createOrUpdateUserProfile(supabase, userData) {
 	// If no LinkedIn match, try UUID if we have one
 	if (
 		!existingUser &&
-		userData.userId &&
-		userData.userId.match(
-			/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
-		)
+		userData.id &&
+		userData.id.match(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i)
 	) {
 		const { data, error } = await supabase
 			.from('documents')
 			.update(supabaseUser)
-			.eq('id', userData.userId)
+			.eq('id', userData.id)
 			.select()
 			.single();
 
@@ -296,7 +292,7 @@ async function createOrUpdateUserProfile(supabase, userData) {
 	// Return the user with their UUID and other fields
 	return {
 		...userData,
-		userId: existingUser.id,
+		id: existingUser.id,
 		location: {
 			latitude: existingUser.latitude,
 			longitude: existingUser.longitude

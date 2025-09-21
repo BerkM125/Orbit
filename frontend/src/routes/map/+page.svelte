@@ -36,7 +36,7 @@
 			const people = data.users.map((user, index) => {
 				const displayName = `${user.first_name || ''} ${user.last_name || ''}`.trim();
 				return new People(
-					user.userId, // Use userId as id
+					user.id, // Use id as id
 					user.location.longitude,
 					user.location.latitude,
 					displayName,

@@ -8,7 +8,7 @@ var demoRoom = {
 	users: [
 		{
 			name: 'Derek',
-			userId: 'derekNumeric',
+			id: 'derekNumeric',
 			linkedin_url: 'https://www.linkedin.com/in/derek-yao/',
 			bio: 'SWE @ Microsoft',
 			headshot_image:
@@ -33,9 +33,9 @@ function removeUser(socketId) {
 }
 
 // Update specific user's data
-function updateUserData(userId, newData) {
+function updateUserData(id, newData) {
 	for (var i = 0; i < demoRoom.users.length; i++) {
-		if (demoRoom.users[i].userId === userId) {
+		if (demoRoom.users[i].id === id) {
 			demoRoom.users[i] = { ...demoRoom.users[i], ...newData };
 			break;
 		}
@@ -50,7 +50,7 @@ async function initializeRoomUsers(supabaseUsers) {
 	// Transform and merge Supabase users with connected users
 	demoRoom.users = supabaseUsers.map((supabaseUser) => {
 		// Check if this user is already connected
-		const connected = connectedUsers.find((u) => u.userId === supabaseUser.userId);
+		const connected = connectedUsers.find((u) => u.id === supabaseUser.id);
 		if (connected) {
 			// Merge Supabase profile data with connected user data
 			return {
@@ -63,7 +63,6 @@ async function initializeRoomUsers(supabaseUsers) {
 	});
 
 	console.log(`Initialized room with ${demoRoom.users.length} users from Supabase`);
-	console.log(demoRoom);
 }
 
 module.exports = {
