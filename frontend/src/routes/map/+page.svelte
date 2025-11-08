@@ -3,6 +3,7 @@
 	import { browser } from '$app/environment';
 	import { localData } from '$lib/stores/data.svelte.js';
 	import ProfilePopup from '$lib/ProfilePopup.svelte';
+	import LinkedInIcon from '~icons/ph/linkedin-logo';
 
 	let map;
 	let mapContainer;
@@ -205,8 +206,7 @@
 	async function searchForPeople(searchParams) {
 		console.log('Searching for:', searchParams);
 		try {
-			const backendUrl =
-				import.meta.env.VITE_BACKEND_URL || 'https://ae0df6604866.ngrok-free.app';
+			const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
 			const response = await fetch(
 				`${backendUrl}/search-langflow/${encodeURIComponent(searchParams)}`
 			);
@@ -359,23 +359,34 @@
 						<p class="no-results">No results found</p>
 					{:else}
 						{#each searchResults as result}
-							<div class="result-card" onclick={() => openProfileFromSearch(result)}>
-								<img
-									src={result.profileInfo?.headshot ||
-										result.headshot_image ||
-										result.headshot}
-									alt={`${result.first_name} ${result.last_name}`}
-									class="result-avatar"
-								/>
-								<div class="result-info">
-									<h3>{result.first_name} {result.last_name}</h3>
-									<p class="bio">
-										{result.profileInfo?.bio ||
-											result.bio ||
-											result.description ||
-											result.about ||
-											'No bio available'}
-									</p>
+							<div
+								class="result-card"
+								onclick={() => openProfileFromSearch(result)}
+								onkeydown={(e) =>
+									e.key === 'Enter' && openProfileFromSearch(result)}
+								role="button"
+								tabindex="0"
+							>
+								<div class="result-content">
+									<img
+										src={result.profileInfo?.headshot ||
+											result.headshot_image ||
+											result.headshot}
+										alt={`${result.first_name} ${result.last_name}`}
+										class="result-avatar"
+									/>
+									<div class="result-info">
+										<h3>{result.first_name} {result.last_name}</h3>
+										<p class="bio">
+											{result.profileInfo?.bio ||
+												result.bio ||
+												result.description ||
+												result.about ||
+												'No bio available'}
+										</p>
+									</div>
+								</div>
+								<div class="button-row">
 									{#if result.profileInfo?.linkedIn || result.linkedin_url || result.linkedin || result.linkedIn}
 										<a
 											href={result.profileInfo?.linkedIn ||
@@ -384,10 +395,11 @@
 												result.linkedIn}
 											target="_blank"
 											rel="noopener noreferrer"
-											class="linkedin-link"
+											class="linkedin-button"
 											onclick={(e) => e.stopPropagation()}
 										>
-											LinkedIn Profile
+											<LinkedInIcon />
+											LinkedIn
 										</a>
 									{/if}
 									<button
@@ -397,7 +409,7 @@
 											sendWaveMessage(result.first_name, '16478960801');
 										}}
 									>
-										👋 Wave
+										👋 &nbsp;Wave
 									</button>
 								</div>
 							</div>
@@ -534,9 +546,11 @@
 		border-radius: 1.5rem;
 		width: 90%;
 		max-width: 600px;
-		max-height: 80vh;
+		max-height: 90vh;
 		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 		border: 2px solid var(--bg-3);
+		display: flex;
+		flex-direction: column;
 	}
 
 	.modal-header {
@@ -544,7 +558,8 @@
 		justify-content: space-between;
 		align-items: center;
 		padding: 1rem;
-		border-bottom: 1px solid var(--bg-1);
+		border-bottom: 2px solid var(--bg-3);
+		flex-shrink: 0;
 	}
 
 	.modal-header h2 {
@@ -559,26 +574,33 @@
 		font-size: 1.5rem;
 		color: var(--txt-2);
 		cursor: pointer;
-		padding: 0.5rem;
+		padding: 0 0.5rem;
 		border-radius: 0.5rem;
 	}
 
 	.results-container {
 		overflow-y: auto;
-		max-height: calc(80vh - 60px);
+		flex: 1;
 		padding: 1rem;
+		min-height: 0; /* Allow flex item to shrink */
 	}
 
 	.result-card {
 		display: flex;
-		gap: 1rem;
-		padding: 1rem;
+		flex-direction: column;
+		gap: 0.5rem;
+		padding: 0.75rem;
 		border-radius: 1.5rem;
 		background: var(--bg-1);
-		margin-bottom: 1rem;
+		margin-bottom: 0.5rem;
 		cursor: pointer;
 		transition: background 0.2s ease;
 		border: 2px solid var(--bg-2);
+	}
+
+	.result-content {
+		display: flex;
+		gap: 1rem;
 	}
 
 	.result-card:hover {
@@ -586,8 +608,8 @@
 	}
 
 	.result-avatar {
-		width: 60px;
-		height: 60px;
+		width: 3.5rem;
+		height: 3.5rem;
 		border-radius: 50%;
 		object-fit: cover;
 	}
@@ -608,31 +630,47 @@
 		font-size: 0.875rem;
 	}
 
-	.linkedin-link {
-		color: var(--acc-1);
-		text-decoration: none;
-		font-size: 0.875rem;
+	.button-row {
+		display: flex;
+		gap: 0.75rem;
 	}
 
-	.linkedin-link:hover {
-		text-decoration: underline;
+	.linkedin-button {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem;
+		color: var(--bg-1);
+		text-decoration: none;
+		font-size: 0.9rem;
+		font-weight: 500;
+		padding: 0.5rem;
+		background: var(--purple-1);
+		border: none;
+		border-radius: 1.5rem;
+		box-sizing: border-box;
+		flex: 1;
+	}
+
+	.linkedin-button :global(svg) {
+		font-size: 1rem;
 	}
 
 	.wave-button {
 		display: inline-flex;
 		align-items: center;
 		gap: 0.5rem;
-		background: var(--purple-1);
+		background: var(--bg-3);
 		color: var(--txt-0);
-		border: none;
+		border: 2px solid var(--bg-4);
 		border-radius: 1.5rem;
 		padding: 0.5rem 1rem;
-		font-size: 0.875rem;
+		font-size: 0.9rem;
 		cursor: pointer;
-		margin-top: 0.75rem;
 		transition:
 			transform 0.2s ease,
 			background 0.2s ease;
+		box-sizing: border-box;
 	}
 
 	.wave-button:active {

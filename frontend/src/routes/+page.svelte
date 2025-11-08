@@ -130,7 +130,7 @@
 			// Get the stagger value from the CSS custom property
 			const computedStyle = getComputedStyle(element);
 			const stagger = computedStyle.getPropertyValue('--stagger') || '0';
-			const staggerValue = parseFloat(stagger) * 7; // Use the circle size for stagger calculation
+			const staggerValue = parseFloat(stagger) * 8; // Use the circle size for stagger calculation
 
 			element.style.transform = `translateX(${staggerValue}rem) scale(${totalScale})`;
 		});
@@ -355,8 +355,8 @@
 
 	.hexagonal-grid {
 		display: grid;
-		grid-template-rows: repeat(var(--grid-rows), 6rem);
-		grid-template-columns: repeat(var(--grid-cols), 6rem);
+		grid-template-rows: repeat(var(--grid-rows), 7rem);
+		grid-template-columns: repeat(var(--grid-cols), 7rem);
 		gap: 0.15rem 1rem;
 		position: relative;
 		pointer-events: none;
@@ -365,8 +365,8 @@
 	.user {
 		grid-row: var(--grid-row);
 		grid-column: var(--grid-col);
-		width: 6rem;
-		height: 6rem;
+		width: 7.5rem;
+		height: 7.5rem;
 		border-radius: 50%;
 		display: flex;
 		align-items: center;
